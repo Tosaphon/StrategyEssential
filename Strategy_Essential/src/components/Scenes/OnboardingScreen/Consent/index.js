@@ -3,6 +3,7 @@ import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from "../../../Utility/BaseComponent";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('screen')
@@ -20,6 +21,7 @@ class Consent extends BaseComponent {
         this.setState({ isAgree: !this.state.isAgree })
     }
     navigateToHome() {
+        AsyncStorage.setItem("isMember","true")
         DeviceEventEmitter.emit('updateRootView');
         console.log("emit updateRootView")
     }

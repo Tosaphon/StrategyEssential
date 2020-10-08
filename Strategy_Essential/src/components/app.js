@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appea
 import RootStack from '../navigation/RootNavigation'
 import OnboardingNavigation from '../navigation/OnboardingNavigation'
 import AsyncStorage from '@react-native-community/async-storage';
+import SplashScreen from '../navigation/SplashScreen'
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -23,7 +24,8 @@ class App extends Component {
       numberOfList: 3,
       isMember: true,
       isPodcastPlay: false,
-      isShowPodCastPlayer: false
+      isShowPodCastPlayer: false,
+      loadingPreload: true
     };
   }
   componentDidMount() {
@@ -37,6 +39,10 @@ class App extends Component {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  onloadPreload = async (isMember) => {
+    await this.setState({ loadingPreload: false, isMember: isMember })
   }
 
   _handleAppStateChange = (nextAppState) => {
@@ -53,8 +59,9 @@ class App extends Component {
   }
 
   handleUpdateRootView = async (event) => {
-    await this.setState({ isMember: true })
-    console.log("isMember ", this.state.isMember)
+    const isMember = await AsyncStorage.getItem("isMember")
+    var isMemberBool = (isMember == 'true');
+    await this.setState({ isMember: isMemberBool })
   }
 
   handleSlideIndicator = async (event) => {
@@ -186,6 +193,9 @@ class App extends Component {
   }
 
   render() {
+    if (this.state.loadingPreload) {
+      return <SplashScreen onloadPreload={this.onloadPreload} />
+    }
     if (this.state.isMember) {
       return this.renderRootStack()
     } else {

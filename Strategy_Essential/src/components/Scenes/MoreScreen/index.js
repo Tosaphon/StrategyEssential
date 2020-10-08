@@ -8,6 +8,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const { width, height } = Dimensions.get('screen')
 const menuList = ['Inbox', 'Wish List', 'App Settings', 'Help']
@@ -145,7 +146,12 @@ class MoreScreen extends BaseComponent {
                       onPress: () => console.log('Cancel Pressed'),
                       style: 'cancel'
                     },
-                    { text: 'Sign out', onPress: () => console.log('OK Pressed') }
+                    {
+                      text: 'Sign out', onPress: () => {
+                        AsyncStorage.setItem("isMember", "false")
+                        DeviceEventEmitter.emit('updateRootView');
+                      }
+                    }
                   ])
               }}
             >

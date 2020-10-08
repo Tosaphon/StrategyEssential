@@ -8,36 +8,31 @@ class SplashScreen extends Component {
     super(props);
     this.state = {
       token: null,
-      isLoaded:false
+      isLoaded: false
     };
   }
 
   componentDidMount() {
-    this.navigateTo()
+    this.onloadPreload()
   }
 
-  async navigateTo() {
-    this.props.navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          { name: 'MobileRootStack' }
-        ],
-      })
-    );
+  async onloadPreload() {
+    const isMember = await AsyncStorage.getItem("isMember")
+    var isMemberBool = (isMember == 'true');
+    this.props.onloadPreload(isMemberBool)
   }
 
   render() {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Splash Screen</Text>
-          {/* <Image
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Splash Screen</Text>
+        {/* <Image
             style={{ width: '50%' }}
             source={require('../../images/ssup-logo.png')}
             resizeMode="contain"
           /> */}
-        </View>
-      );
+      </View>
+    );
   }
 }
 

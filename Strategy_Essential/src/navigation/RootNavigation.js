@@ -3,7 +3,7 @@ import { Button, Text, View, Platform } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
-import { createStackNavigator, TransitionPresets, createSwitchNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
@@ -225,7 +225,7 @@ function SplashScreenStack() {
     <NavigationContainer>
       <NavigationStack.Navigator
         screenOptions={{
-          initialRouteName: 'SplashScreen',
+          initialRouteName: 'SplashStackScreen',
           headerShown: false
         }}
       >
@@ -235,16 +235,10 @@ function SplashScreenStack() {
     </NavigationContainer>
   )
 }
-const AppSwitchNavigator = createSwitchNavigator({
-  'SplashScreen': { screen: SplashStackScreen },
-  'MobileRootStack': { screen: MobileRootStack }
-},
-  {
-    initialRouteName: 'SplashScreen'
-  })
-const App = createAppContainer(AppSwitchNavigator);
 
-// export default function RootStack() {
-//   return SplashScreenStack()
-// }
-export default App;
+export default function RootStack({ navigation }) {
+
+  return MobileRootStack()
+}
+
+//https://reactnavigation.org/docs/auth-flow/#define-our-screens
