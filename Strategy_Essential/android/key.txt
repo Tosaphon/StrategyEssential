@@ -1,0 +1,4 @@
+se_key
+
+password : strategymobileapp
+alias : strategyessential

@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance, TouchableOpacity } from 'react-native';
 import RootStack from '../navigation/RootNavigation'
 import OnboardingNavigation from '../navigation/OnboardingNavigation'
 import AsyncStorage from '@react-native-community/async-storage';
 import SplashScreen from '../navigation/SplashScreen'
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Styles from './BaseView/Styles';
 import PodcastScreen from '../components/Scenes/HomeScreen/DetailScreen/podcastPlayer'
-
+import Video from 'react-native-video';
 
 let { width, height } = Dimensions.get('window')
 
@@ -25,7 +24,8 @@ class App extends Component {
       isMember: true,
       isPodcastPlay: false,
       isShowPodCastPlayer: false,
-      loadingPreload: true
+      loadingPreload: true,
+      podcastCurrentTime: 0
     };
   }
   componentDidMount() {
@@ -71,6 +71,8 @@ class App extends Component {
 
   handleActiveAudioBar = async (event) => {
     await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive })
+    const time = await Math.round(event.currentTime)
+    this.player && this.player.seek(time)
   }
 
   async getTabbarBottomHeight() {
@@ -82,6 +84,13 @@ class App extends Component {
 
   dismisPodcastPlayer = async () => {
     await this.setState({ isShowPodCastPlayer: false })
+    console.log("isShowPodCastPlayer : ", this.state.isShowPodCastPlayer)
+  }
+  async setTime(data) {
+    await this.setState({ currentTime: Math.floor(data.currentTime) });
+  }
+  async setDuration(data) {
+    await this.setState({ maximumTime: Math.floor(data.duration) });
   }
 
   renderAudioBar() {
@@ -101,10 +110,20 @@ class App extends Component {
               flexDirection: 'row'
             }}
           >
+            <Video
+              onLoad={this.setDuration.bind(this)}
+              onProgress={this.setTime.bind(this)}
+              paused={!isPodcastPlay}
+              playInBackground={true}
+              source={require('../Videos/video_01.mp4')}
+              ref={(ref) => {
+                this.player = ref
+              }}
+            />
             <TouchableOpacity
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+              style={{ justifyContent: 'center', alignItems: 'center' }}
               onPress={() => {
-                this.setState({ isShowPodCastPlayer: true })
+                this.setState({ isShowPodCastPlayer: true, isPodcastPlay: false })
               }}
             >
               <View style={{ width: thumnailWidth, height: thumnailWidth * 3 / 4, backgroundColor: 'black', marginLeft: 20, marginVertical: 10 }}>
@@ -117,7 +136,7 @@ class App extends Component {
               วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา ‘ลองดูสิ’ | The Secret Sauce EP.199
               </Text>
             <TouchableOpacity
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+              style={{ justifyContent: 'center', alignItems: 'center' }}
               onPress={() => { this.setState({ isPodcastPlay: !isPodcastPlay }) }}
             >
               {isPodcastPlay ?
@@ -127,7 +146,7 @@ class App extends Component {
               }
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginRight: 12 }}
+              style={{ justifyContent: 'center', alignItems: 'center', marginRight: 12 }}
               onPress={() => { this.setState({ activeAudioBar: false }) }}
             >
               <Ionicons name="close" color='black' size={30} />
@@ -172,17 +191,14 @@ class App extends Component {
   renderSliderIndicator() {
     var indicators = []
     const { slideIndicatorIndex, numberOfList } = this.state
+
     if (slideIndicatorIndex != numberOfList + 1) {
       for (let i = 1; i < numberOfList + 1; i++) {
-        if (i == slideIndicatorIndex) {
-          indicators.push(
-            <View style={{ width: 10, height: 10, borderRadius: 10, backgroundColor: 'white', marginHorizontal: 3 }} />
-          )
-        } else {
-          indicators.push(
-            <View style={{ width: 7, height: 7, borderRadius: 7, backgroundColor: 'white', marginHorizontal: 3 }} />
-          )
-        }
+        console.log('slideIndicatorIndex : ', slideIndicatorIndex)
+        const indicatorSize = i == slideIndicatorIndex ? 10 : 7
+        indicators.push(
+          <View style={{ width: indicatorSize, height: indicatorSize, borderRadius: indicatorSize, backgroundColor: 'white', marginHorizontal: 3 }} />
+        )
       }
     }
     return (

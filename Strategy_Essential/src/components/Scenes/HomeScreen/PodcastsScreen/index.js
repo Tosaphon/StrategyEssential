@@ -79,7 +79,7 @@ class PodcastsScreen extends BaseComponent {
       });
   }
   switchToScreen(screenName) {
-    this.props.navigation.navigate(screenName)
+    this.props.navigation.navigate(screenName, { isPodcast: true })
   }
 
   renderIpadHeader() {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, ScrollView, Image } from 'react-native';
+import { View, Text, Dimensions, ScrollView, Image, TouchableOpacity, DeviceEventEmitter, Alert } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { Appearance, useColorScheme } from 'react-native-appearance';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 import Video from 'react-native-video';
 
@@ -9,7 +10,6 @@ import BaseComponent from '../../Utility/BaseComponent'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-navigation';
 const { width, height } = Dimensions.get('screen')
 
@@ -20,10 +20,24 @@ class DownloadsScreen extends BaseComponent {
       enableEdit: false,
       fill: 0,
       destinationPath: "",
+      scheme: Appearance.getColorScheme(),
       downloadedVideo: ['', '', '', ''],
-      downloadedPodcast: ['', '', '', '']
+      downloadedPodcast: ['', '', '', ''],
+      mockVideoCount: 4
     };
     // this.startDownload()
+  }
+
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      DeviceEventEmitter.addListener('navigateToPodcastDetail', this.navigateToPodcastDetail);
+    });
+    this.reRender = this.props.navigation.addListener('blur', () => {
+      DeviceEventEmitter.removeListener('navigateToPodcastDetail')
+    });
+    Appearance.addChangeListener(({ colorScheme }) => {
+      this.setState({ scheme: colorScheme })
+    })
   }
 
   async startDownload() {
@@ -69,14 +83,29 @@ class DownloadsScreen extends BaseComponent {
     )
   }
 
-  renderRemoveButton() {
+  renderRemoveButton(index) {
+    const { scheme } = this.state
     return (
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => { }}
+        onPress={() => {
+          Alert.alert("Would you like to remove this video?", "",
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel'
+              },
+              {
+                text: 'remove', onPress: () => {
+                  this.setState({ mockVideoCount: this.state.mockVideoCount - 1 })
+                }
+              }
+            ])
+        }}
       >
         <Text
-          style={[Styles.title, { color: 'red', fontWeight: '800', fontSize: 12 }]}>
+          style={[this.getStyle(scheme).title, { color: 'red', fontWeight: '800', fontSize: 12 }]}>
           REMOVE
         </Text>
       </TouchableOpacity>
@@ -84,10 +113,11 @@ class DownloadsScreen extends BaseComponent {
   }
 
   renderContentsList() {
+    const { scheme ,mockVideoCount} = this.state
     const thumnailWidth = width / 3
     const thumbailHeight = thumnailWidth * 9 / 16
     var contentsList = []
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < mockVideoCount; i++) {
       contentsList.push(
         <TouchableOpacity
           activeOpacity={0.8}
@@ -101,19 +131,19 @@ class DownloadsScreen extends BaseComponent {
               source={require('../../../images/mockup/mock_video_thumnail01.png')}
             />
             <View style={{ flexDirection: 'column', flex: 1 }}>
-              <Text style={[Styles.title, {}]}>
+              <Text style={[this.getStyle(scheme).title, {}]}>
                 TITLE
               </Text>
-              <Text style={[Styles.title, {}]}>
+              <Text style={[this.getStyle(scheme).title, {}]}>
                 SUBTITLE
               </Text>
-              <Text style={[Styles.title, {}]}>
+              <Text style={[this.getStyle(scheme).title, {}]}>
                 DATE TIME
               </Text>
             </View>
             <View style={{ width: 60, marginRight: 16, justifyContent: 'center', alignItems: 'center' }}>
               {this.state.enableEdit ?
-                this.renderRemoveButton() :
+                this.renderRemoveButton(i) :
                 this.state.fill < 100 ?
                   this.getProgressCircular() :
                   <MaterialIcons name="done" color='green' size={30} />
@@ -127,13 +157,14 @@ class DownloadsScreen extends BaseComponent {
   }
 
   renderNoVideoView() {
+    const { scheme } = this.state
     const cycleSize = width / 3
     return (
-      <View style={[Styles.container, { alignItems: 'center' }]}>
+      <View style={[this.getStyle(scheme).container, { alignItems: 'center' }]}>
         <View style={{ width: cycleSize, height: cycleSize, backgroundColor: 'gray', borderRadius: cycleSize, marginTop: 120, justifyContent: 'center', alignItems: 'center' }}>
           <MaterialIcons name="file-download" color='white' size={width / 4} />
         </View>
-        <Text style={[Styles.title, { marginVertical: 16, marginHorizontal: 32, textAlign: 'center' }]}>
+        <Text style={[this.getStyle(scheme).title, { marginVertical: 16, marginHorizontal: 32, textAlign: 'center' }]}>
           You can download all contents such as videos or podcasts for see it later with offline mode
           </Text>
         <TouchableOpacity
@@ -143,7 +174,7 @@ class DownloadsScreen extends BaseComponent {
           }}
         >
           <View style={{ borderColor: 'white', borderWidth: 1 }}>
-            <Text style={[Styles.title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLAOD</Text>
+            <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLAOD</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -151,13 +182,14 @@ class DownloadsScreen extends BaseComponent {
   }
 
   renderFineMoreToDownload() {
+    const { scheme } = this.state
     return (
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => { }}
       >
         <View style={{ borderColor: 'white', borderWidth: 1 }}>
-          <Text style={[Styles.title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLAOD</Text>
+          <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLAOD</Text>
         </View>
       </TouchableOpacity>
     )
@@ -173,43 +205,47 @@ class DownloadsScreen extends BaseComponent {
   }
 
   render() {
-    const { enableEdit } = this.state
-    // return this.renderNoVideoView()
-    return (
-      <SafeAreaView style={Styles.container}>
-        <View
-          style={{ width: width, alignItems: 'flex-end' }}
-        >
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={{ justifyContent: 'center', alignItems: 'center' }}
-            onPress={() => {
-              this.setState({ enableEdit: !enableEdit })
-            }}
-          >
-            {enableEdit ?
-              <Text style={[Styles.title, { marginRight: 16, height: 26 }]}>
-                Done
-              </Text>
-              :
-              <MaterialIcons style={{ marginRight: 16 }} name="edit" color='white' size={26} />
-            }
+    const { enableEdit, scheme, mockVideoCount } = this.state
+    if (mockVideoCount == 0) {
+      return this.renderNoVideoView()
+    } else {
 
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          style={{ flex: 1, width: width }}
-        >
-          <Text style={[Styles.title, { marginLeft: 16 }]}>
-            Videos
-            </Text>
-          {this.renderContentsList()}
-          <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 40 }}>
-            {this.renderFineMoreToDownload()}
+      return (
+        <SafeAreaView style={this.getStyle(scheme).container}>
+          <View
+            style={{ width: width, alignItems: 'flex-end' }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={{ justifyContent: 'center', alignItems: 'center' }}
+              onPress={() => {
+                this.setState({ enableEdit: !enableEdit })
+              }}
+            >
+              {enableEdit ?
+                <Text style={[this.getStyle(scheme).title, { marginRight: 16, height: 26 }]}>
+                  Done
+                </Text>
+                :
+                <MaterialIcons style={{ marginRight: 16 }} name="edit" color='white' size={26} />
+              }
+
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
+          <ScrollView
+            style={{ flex: 1, width: width }}
+          >
+            <Text style={[this.getStyle(scheme).title, { marginLeft: 16 }]}>
+              Videos
+              </Text>
+            {this.renderContentsList()}
+            <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 40 }}>
+              {this.renderFineMoreToDownload()}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      );
+    }
   }
 }
 

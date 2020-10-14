@@ -7,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -77,9 +78,9 @@ class MoreScreen extends BaseComponent {
     const { scheme } = this.state
     return (
       <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
-        <SafeAreaView style={[Styles.container, { width: width }]}>
+        <SafeAreaView style={[this.getStyle(scheme).container, { width: width }]}>
           <View style={{ paddingLeft: 16, paddingBottom: 8, paddingTop: 24 }}>
-            <Text style={[Styles.title, { fontSize: 16 }]}>Menu</Text>
+            <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]}>Menu</Text>
           </View>
           <View style={{ width: width }}>
             <TouchableOpacity style={ScreenStyles.tableCell}
@@ -88,9 +89,9 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <Feather style={{ marginLeft: 20, marginRight: 16 }} name="inbox" color='white' size={26} />
-              <Text style={[Styles.title, { flex: 1 }]}>Inbox</Text>
+              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Inbox</Text>
               <View style={{ width: 26, height: 26, borderRadius: 26, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={Styles.title}>
+                <Text style={this.getStyle(scheme).title}>
                   1</Text>
               </View>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
@@ -103,8 +104,19 @@ class MoreScreen extends BaseComponent {
                 this.props.navigation.navigate(switchScreenCase.WishListScreen);
               }}
             >
-              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="heart" color='white' size={26} />
-              <Text style={[Styles.title, { flex: 1 }]}>Wish List</Text>
+              <FontAwesome style={{ marginLeft: 20, marginRight: 16 }}  name="bookmark-o"  color='white' size={26} />
+              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>My List</Text>
+              <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: width }}>
+            <TouchableOpacity style={ScreenStyles.tableCell}
+              onPress={() => {
+                // this.props.navigation.navigate(switchScreenCase.HelpScreen);
+              }}
+            >
+              <FontAwesome5 style={{ marginLeft: 20, marginRight: 16 }} name="headphones-alt" color='white' size={26} />
+              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Podcasts Saved</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -115,7 +127,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <Feather style={{ marginLeft: 20, marginRight: 16 }} name="settings" color='white' size={26} />
-              <Text style={[Styles.title, { flex: 1 }]}>App Setting</Text>
+              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>App Settings</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -126,7 +138,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <Feather style={{ marginLeft: 20, marginRight: 16 }} name="help-circle" color='white' size={26} />
-              <Text style={[Styles.title, { flex: 1 }]}>Help</Text>
+              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Help</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -155,9 +167,11 @@ class MoreScreen extends BaseComponent {
                   ])
               }}
             >
+              <View style={{width:width,justifyContent:'center',alignItems:'center'}}>
               <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]} allowFontScaling={false}>
                 Sign Out
-          </Text>
+              </Text>
+              </View>
             </TouchableOpacity>
           </View>
 

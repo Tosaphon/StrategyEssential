@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, SafeAreaView, DeviceEventEmitter } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, StyleSheet, Dimensions, SafeAreaView, DeviceEventEmitter, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Styles from "../BaseView/Styles";
 import LoadingView from "../BaseView/LoadingView";
@@ -64,26 +63,34 @@ class BaseComponent extends Component {
             </View>
         )
     }
-    renderHeaderBG() {
+    renderHeaderBG(barHeight,scheme) {
+        const darkTheme = [
+            'rgba(0, 0, 0,1)',
+            'rgba(0, 0, 0,1)',
+            'rgba(0, 0, 0,8)',
+            'rgba(0, 0, 0,0)',
+        ]
+        const lightTheme = [
+            'rgba(255, 255, 255,1)',
+            'rgba(255, 255, 255,1)',
+            'rgba(255, 255, 255,1)',
+            'rgba(255, 255, 255,1)',
+        ]
         return (
             <View style={{
                 width: width,
-                backgroundColor: 'transparent',
+                backgroundColor: scheme == 'light' ? 'white' : 'black',
                 alignItems: 'flex-start',
-                position: 'absolute'
+                position: 'absolute',
+                height:barHeight,
             }}>
-                <LinearGradient
-                    colors={[
-                        'rgba(0, 0, 0,1)',
-                        'rgba(0, 0, 0,1)',
-                        'rgba(0, 0, 0,8)',
-                        'rgba(0, 0, 0,0)',
-                    ]}
+                {/* <LinearGradient
+                    colors={this.state.scheme == 'light' ? 'white' : 'black'}
                     style={{
                         width: '100%',
-                        height: 100,
+                        height: barHeight,
                         overflow: 'visible',
-                    }} />
+                    }} /> */}
             </View>
         )
     }
@@ -111,10 +118,11 @@ class BaseComponent extends Component {
         )
     }
 
-    getStyle(scheme) {
+    getStyle() {
+        const scheme = 'dark'
         const { width, height } = Dimensions.get('screen')
         const boxWidth = width * 3 / 4
-        console.log("baseComponent : ", scheme)
+        // console.log("baseComponent : ", scheme)
         return StyleSheet.create({
             backgroundVideo: {
                 position: 'absolute',
@@ -131,11 +139,12 @@ class BaseComponent extends Component {
                 backgroundColor: scheme === 'light' ? 'white' : '#1E1F1E',
             },
             title: {
-                color: 'white',
-                fontFamily: 'SukhumvitSet-Bold'
+                color: scheme === 'light' ? 'black' : 'white',
+                fontFamily: 'SukhumvitSet-Bold',
+                fontWeight:'bold'
             },
             subTitle: {
-                color: 'white',
+                color: scheme === 'light' ? 'black' : 'white',
                 fontFamily: 'SukhumvitSet-Medium'
             },
             subTitleGray: {
@@ -143,8 +152,10 @@ class BaseComponent extends Component {
                 fontFamily: 'SukhumvitSet-Medium'
             },
             headerTitle: {
-                color: 'white',
-                fontSize: 20
+                color: scheme === 'light' ? 'black' : 'white',
+                fontSize: 20,
+                fontFamily: 'SukhumvitSet-Bold',
+                fontWeight:'bold'
             },
             textInputView: {
                 backgroundColor: '#2e2e2f',

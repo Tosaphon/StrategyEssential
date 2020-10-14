@@ -1,14 +1,11 @@
 
-import { StyleSheet, Dimensions, Appearance } from 'react-native';
+import { StyleSheet, Dimensions, Appearance, Platform } from 'react-native';
 // import { useColorScheme } from 'react-native-appearance';
 
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
 function createStyle() {
-    // const scheme = useColorScheme()
-    // const scheme = Appearance.getColorScheme()
-    // console.log("scheme : ", scheme)
     const Styles = StyleSheet.create({
         backgroundVideo: {
             position: 'absolute',
@@ -49,6 +46,11 @@ function createStyle() {
             justifyContent: 'flex-start',
             flexDirection: 'row'
         },
+        textInput: {
+            padding: 0,
+            margin: 0,
+            borderWidth: 0,
+        }
     })
     return Styles
 }

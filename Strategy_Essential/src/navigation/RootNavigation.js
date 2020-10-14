@@ -19,10 +19,12 @@ import VideosScreen from '../components/Scenes/HomeScreen/VideosScreen'
 import PodcastsScreen from '../components/Scenes/HomeScreen/PodcastsScreen'
 import ArticlesScreen from '../components/Scenes/HomeScreen/ArticlesScreen'
 import PodcastsPlayer from '../components/Scenes/HomeScreen/DetailScreen/podcastPlayer'
+import ArticleDetail from '../components/Scenes/HomeScreen/DetailScreen/articleDetail'
 
 import SearchScreen from '../components/Scenes/SearchScreen'
 import DownloadsScreen from '../components/Scenes/DownloadsScreen'
 import MoreScreen from '../components/Scenes/MoreScreen'
+import FeedScreen from '../components/Scenes/FeedScreen'
 import AppSettingScreen from '../components/Scenes/MoreScreen/AppSetting'
 import InboxScreen from '../components/Scenes/MoreScreen/InboxScreen'
 import WishListScreen from '../components/Scenes/MoreScreen/WishListScreen'
@@ -71,16 +73,17 @@ function SplashStackScreen() {
 
 function HomeStackTopTab() {
   const insets = useSafeAreaInsets();
+  const scheme = useColorScheme()
   return (
     <TopTab.Navigator
       initialRouteName="HomeScreen"
       tabBarOptions={{
-        labelStyle: { fontSize: 12, fontFamily: 'SukhumvitSet-Bold' },
+        labelStyle: { fontSize: 12, fontFamily: 'SukhumvitSet-Bold', color: scheme == 'light' ? 'black' : 'white' },
         tabStyle: { width: 100 },
         style: {
-          backgroundColor: 'transparent',
+          backgroundColor: scheme == 'light' ? 'white' : 'black',
           marginTop: insets.top,
-          position: 'absolute',
+          // position: 'absolute',
           left: 0,
           right: 0,
           elevation: 0
@@ -106,6 +109,7 @@ function HomeStackScreen() {
     >
       <NavigationStack.Screen name="HomeStackTopTab" component={HomeStackTopTab} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
+      <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
     </NavigationStack.Navigator>
   );
 }
@@ -133,6 +137,7 @@ function SearchStackScreen() {
     >
       <NavigationStack.Screen name="SearchScreen" component={SearchScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
+      <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
     </NavigationStack.Navigator>
   );
 }
@@ -145,6 +150,7 @@ function DownloadsStackScreen() {
     >
       <NavigationStack.Screen name="DownloadScreen" component={DownloadsScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
+      <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
     </NavigationStack.Navigator>
   );
 }
@@ -161,6 +167,7 @@ function MoreStackScreen() {
       <NavigationStack.Screen name="InboxScreen" component={InboxScreen} />
       <NavigationStack.Screen name="WishListScreen" component={WishListScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
+      <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
     </NavigationStack.Navigator>
   );
 }
@@ -170,13 +177,13 @@ function MobileRootStack() {
   const scheme = useColorScheme()
   return (
     <AppearanceProvider>
-      <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <NavigationContainer theme={scheme === 'light' ? DefaultTheme : DarkTheme}>
         <TabBottom.Navigator
           tabBarOptions={{
-            activeTintColor: scheme === 'dark' ? darkThemeAppearance.active : defaultThemeAppearance.active,
-            inactiveTintColor: scheme === 'dark' ? darkThemeAppearance.inActive : defaultThemeAppearance.inActive,
+            activeTintColor: scheme === 'light' ? defaultThemeAppearance.active : darkThemeAppearance.active,
+            inactiveTintColor: scheme === 'light' ? defaultThemeAppearance.inActive : darkThemeAppearance.inActive,
             style: {
-              borderTopColor: scheme === 'dark' ? 'black' : 'white',
+              borderTopColor: scheme === 'light' ? 'white' : 'black',
             },
             labelStyle: { fontFamily: 'SukhumvitSet-Bold' }
           }}
@@ -190,6 +197,14 @@ function MobileRootStack() {
             }}
             name="Home"
             component={HomeStackScreen} />
+          <TabBottom.Screen
+            options={{
+              tabBarLabel: 'Feed',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="newspaper-variant-outline" color={color} size={26} />
+              ),
+            }}
+            name="Feed" component={FeedScreen} />
           <TabBottom.Screen
             options={{
               tabBarLabel: 'Search',

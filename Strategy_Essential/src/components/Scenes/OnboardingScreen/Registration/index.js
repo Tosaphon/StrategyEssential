@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from "../../../Utility/BaseComponent";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
@@ -54,9 +53,9 @@ class Regsitration extends BaseComponent {
   validateCouponCode() {
 
   }
-  
+
   async navigateToOTPConfirmation() {
-    await AsyncStorage.setItem('token','test')
+    await AsyncStorage.setItem('token', 'test')
     await this.setState({ isLoading: true })
     await this.props.navigation.navigate('OTPConfirmationScreen',
       {
@@ -74,7 +73,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView, { marginTop: 40 }]}>
               <TextInput
                 placeholder="Full Name"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -94,7 +93,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Email"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -115,7 +114,7 @@ class Regsitration extends BaseComponent {
               <TextInput
                 secureTextEntry={true}
                 placeholder="Password"
-                style={[Styles.title, { height: 32 }]}
+                style={[Styles.title, Styles.textInput, { height: 32 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -135,7 +134,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Confirm Password"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -152,7 +151,7 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <Text style={[Styles.title, { width: boxWidth, marginVertical: 10 }]}>
+            <Text style={[Styles.title, Styles.textInput, { width: boxWidth, marginVertical: 10 }]}>
               Use 8 or more characters with a mix of letters,
               numbers
                   </Text>
@@ -160,7 +159,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Mobile Number"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={10}
                 keyboardType='phone-pad'

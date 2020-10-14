@@ -24,6 +24,15 @@ class VideosScreen extends BaseComponent {
     };
   }
   componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      DeviceEventEmitter.addListener('navigateToPodcastDetail', this.navigateToPodcastDetail);
+    });
+    this.reRender = this.props.navigation.addListener('blur', () => {
+      DeviceEventEmitter.removeListener('navigateToPodcastDetail')
+    });
+    Appearance.addChangeListener(({ colorScheme }) => {
+      this.setState({ scheme: colorScheme })
+    })
   }
 
   async setTabbarBottomHeight(height) {
@@ -77,17 +86,8 @@ class VideosScreen extends BaseComponent {
     this.props.navigation.navigate(screenName)
   }
 
-  renderIpadHeader() {
-    if (Platform.isPad) {
-      return (
-        <View style={{ width: width, backgroundColor: 'black', alignItems: 'flex-end', paddingTop: 20, paddingBottom: 8 }}>
-          <Feather name="search" color='white' size={26} />
-        </View>
-      )
-    }
-  }
-
   renderCategory() {
+    const { scheme } = this.state
     let videoList = []
     for (var i = 0; i < 10; i++) {
       videoList.push(
@@ -105,7 +105,7 @@ class VideosScreen extends BaseComponent {
     }
     return (
       <View style={{ width: width, marginTop: 20 }}>
-        <Text style={[Styles.title, { marginLeft: 20, marginVertical: 10 }]}>
+        <Text style={[this.getStyle(scheme).title, { marginLeft: 20, marginVertical: 10 }]}>
           Trending Now
           </Text>
         <ScrollView
@@ -120,8 +120,9 @@ class VideosScreen extends BaseComponent {
   }
 
   render() {
+    const { scheme } = this.state
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle(scheme).container}>
         {this.renderFooter()}
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -155,8 +156,6 @@ class VideosScreen extends BaseComponent {
           /> */}
           <View style={{ height: 40 }} />
         </ScrollView>
-        {this.renderHeaderBG()}
-
         <View
           ///for detect tabbar bottom height
           style={{ position: 'absolute', width: width, bottom: 0 }}
@@ -170,13 +169,5 @@ class VideosScreen extends BaseComponent {
   }
 }
 
-{/* <Tab.Screen
-          options={{
-            tabBarLabel: 'Search',
-            tabBarIcon: ({ color }) => (
-              <Feather name="search" color={color} size={26} />
-            ),
-          }}
-          name="Search" component={SearchStackScreen} /> */}
 
 export default VideosScreen;

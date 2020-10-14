@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, ScrollView } from 'react-native';
 import BaseComponent from '../../../Utility/BaseComponent'
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import Styles from '../../../BaseView/Styles';
 import Feather from 'react-native-vector-icons/Feather';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('screen')
 
 const headerSection = {
-  Home: 'Home',
   Videos: 'Videos',
   Podcasts: 'Podcasts',
   Articles: 'Articles'
@@ -20,8 +18,7 @@ class WishListScreen extends BaseComponent {
     this.state = {
       ...this.state,
       searchBegin: false,
-      selectedSection: headerSection.Home,
-      valueHome: 0,
+      selectedSection: headerSection.Videos,
       valueVideos: 0,
       valuePodcasts: 0,
       valueArticles: 0
@@ -34,7 +31,7 @@ class WishListScreen extends BaseComponent {
       console.log("colorScheme : ", colorScheme)
     })
   }
-  
+
   renderContentsList() {
     const thumnailWidth = width / 3
     const thumbailHeight = thumnailWidth * 9 / 16
@@ -70,18 +67,9 @@ class WishListScreen extends BaseComponent {
   }
 
   renderSectionHeader() {
-    const { valueHome, valueVideos, valuePodcasts, valueArticles, selectedSection } = this.state
+    const { valueVideos, valuePodcasts, valueArticles, selectedSection } = this.state
     return (
       <View style={{ width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-        <TouchableOpacity
-          style={{ marginHorizontal: 10 }}
-          activeOpacity={0.8}
-          onPress={() => { this.setState({ selectedSection: headerSection.Home }) }}
-        >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Home ? 'white' : 'gray' }]}>
-            Home ({valueHome})
-            </Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={{ marginHorizontal: 10 }}
           activeOpacity={0.8}
@@ -123,8 +111,9 @@ class WishListScreen extends BaseComponent {
   render() {
     return (
       <View style={Styles.container}>
-        {this.renderHeader("Wish List", this.navigateBack)}
+        {this.renderHeader("My List", this.navigateBack)}
         {this.renderFooter()}
+        {this.renderSectionHeader()}
         <ScrollView
           style={{ flex: 1, width: width }}
           onTouchStart={() => { this.setState({ searchBegin: false }) }}

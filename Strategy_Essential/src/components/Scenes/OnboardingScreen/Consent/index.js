@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from "../../../Utility/BaseComponent";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
@@ -21,20 +20,21 @@ class Consent extends BaseComponent {
         this.setState({ isAgree: !this.state.isAgree })
     }
     navigateToHome() {
-        AsyncStorage.setItem("isMember","true")
+        AsyncStorage.setItem("isMember", "true")
         DeviceEventEmitter.emit('updateRootView');
         console.log("emit updateRootView")
     }
 
     render() {
+        const { isAgree } = this.state
         return (
             <View style={[Styles.container, { alignItems: 'center' }]}>
-                {this.renderHeader("Consnets", this.navigateBack)}
+                {this.renderHeader("Consents", this.navigateBack)}
                 <ScrollView style={{ flex: 1, width: '85%', backgroundColor: 'white' }}>
                 </ScrollView>
                 <View style={{ marginVertical: 10, width: '85%', flexDirection: 'row' }}>
                     <TouchableOpacity
-                        style={{ flexDirection: 'row', width: '100%', alignItems: 'center', backgroundColor: 'red' }}
+                        style={{ flexDirection: 'row', width: '100%', alignItems: 'center', }}
                         activeOpacity={1}
                         onPress={() => { this.toggleConsent() }}
                     >
@@ -44,12 +44,10 @@ class Consent extends BaseComponent {
                             color='white'
                             size={26} />
                         <Text style={Styles.title}>
-                            I Agree to the consent
+                            I Agree to the consents
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity>
-                        <View style={{ width: 20, height: 10, backgroundColor: 'red', right: 0 }}>
-                        </View>
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginBottom: 40 }}>
@@ -58,9 +56,10 @@ class Consent extends BaseComponent {
                         onPress={() => {
                             this.navigateToHome()
                         }}
+                        disabled={!isAgree}
                     >
-                        <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#dfb445', borderRadius: 10 }]}>
-                            <Text style={[Styles.title]}>
+                        <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: isAgree ? '#dfb445' : 'gray', borderRadius: 10 }]}>
+                            <Text style={[Styles.title,{}]}>
                                 NEXT
                             </Text>
                         </View>

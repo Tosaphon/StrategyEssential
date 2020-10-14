@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Image, Dimensions } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, DeviceEventEmitter, Image, Dimensions, TouchableOpacity } from 'react-native';
 import Styles from '../../../BaseView/Styles'
 const { width, height } = Dimensions.get('screen')
 

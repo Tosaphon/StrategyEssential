@@ -17,19 +17,20 @@ class AppSetting extends BaseComponent {
     this.state = {
       isWifiOnly: false,
       isThaiLanguage: false,
+      isLightMode: false,
       scheme: Appearance.getColorScheme()
     };
   }
 
   render() {
-    const { isThaiLanguage, isWifiOnly } = this.state
+    const { isThaiLanguage, isWifiOnly ,isLightMode} = this.state
     return (
       <View style={Styles.container}>
-        {this.renderHeader("App Setting", this.navigateBack)}
+        {this.renderHeader("App Settings", this.navigateBack)}
         <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
           <SafeAreaView style={[Styles.container, { width: width }]}>
             <View style={{ width: width }}>
-              <TouchableOpacity style={ScreenStyles.tableCell}>
+              <View style={ScreenStyles.tableCell}>
                 <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="wifi" color='white' size={26} />
                 <Text style={[Styles.title, { flex: 1 }]}>Wifi Only</Text>
                 <View
@@ -45,10 +46,10 @@ class AppSetting extends BaseComponent {
                     onToggle={isOn => this.setState({ isWifiOnly: !isWifiOnly })}
                   />
                 </View>
-              </TouchableOpacity>
+              </View>
             </View>
             <View style={{ width: width }}>
-              <TouchableOpacity style={ScreenStyles.tableCell}>
+              <View style={ScreenStyles.tableCell}>
                 <SimpleLineIcons style={{ marginLeft: 20, marginRight: 16 }} name="globe" color='white' size={26} />
                 <Text style={[Styles.title, { flex: 1 }]}>Language</Text>
                 <View
@@ -56,7 +57,7 @@ class AppSetting extends BaseComponent {
                 >
                   <ToggleSwitch
                     isOn={isThaiLanguage}
-                    onColor="green"
+                    onColor="4c5cd1"
                     offColor="#4c5cd1"
                     label={isThaiLanguage ? "TH" : "EN"}
                     labelStyle={Styles.title}
@@ -64,7 +65,26 @@ class AppSetting extends BaseComponent {
                     onToggle={isOn => this.setState({ isThaiLanguage: !isThaiLanguage })}
                   />
                 </View>
-              </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ width: width }}>
+              <View style={ScreenStyles.tableCell}>
+                <MaterialIcons style={{ marginLeft: 20, marginRight: 16 }} name="color-lens" color='white' size={26} />
+                <Text style={[Styles.title, { flex: 1 }]}>Theme</Text>
+                <View
+                  style={{ paddingRight: 20 }}
+                >
+                  <ToggleSwitch
+                    isOn={isLightMode}
+                    onColor="4c5cd1"
+                    offColor="#4c5cd1"
+                    label={isLightMode ? "Light" : "Dark"}
+                    labelStyle={Styles.title}
+                    size='medium'
+                    onToggle={isOn => this.setState({ isLightMode: !isLightMode })}
+                  />
+                </View>
+              </View>
             </View>
             <View style={{ width: width }}>
               <TouchableOpacity style={ScreenStyles.tableCell}

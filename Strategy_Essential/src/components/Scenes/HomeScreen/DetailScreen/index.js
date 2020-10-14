@@ -1,16 +1,20 @@
 import React from 'react';
-import { DeviceEventEmitter, Dimensions, Image, SafeAreaView, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { DeviceEventEmitter, Dimensions, Image, SafeAreaView, Text, TouchableWithoutFeedback, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Share from "react-native-share";
 import Video from 'react-native-video';
 import Styles from '../../../BaseView/Styles';
 import BaseComponent from '../../../Utility/BaseComponent';
 import LinearGradient from 'react-native-linear-gradient';
+import VideoPlayer from 'react-native-video-controls';
 
 const { width, height } = Dimensions.get('screen')
 const DOUBLE_PRESS_DELAY = 300;
@@ -24,10 +28,13 @@ class DetailScreen extends BaseComponent {
       isTeserFullscreen: false,
       isTeserPause: false,
       lastTap: null,
+      isBookmark: false,
       stackCount: 0,
       title: 'วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา',
       subTitle: 'ใน Podcast The Secret Sauce ตอนนี้ ผมจะมาพูดคุยถึงขั้นตอนวางกลยุทธ์ในเชิงเครื่องมือ หรือ Tools ขั้นตอนเหล่านี้จะช่วยนำทางเราและสามารถนำไปใช้ได้จริงกับทั้งบริษัท และส่วนบุคคล โดยปกติแล้วเมื่อพูดถึงการทำกลยุทธ์ บริษัทต่างๆ มักจะให้เอาคนที่เกี่ยวข้องทั้งหมดมารวมกัน หา Facilitator สักคนเพื่อมาทำ SWOT ด้วยกัน แปะโพสต์อิทไอเดียมากมาย แล้วโหวตให้คะแนนกัน เพราะไม่มีใครกล้าฆ่าไอเดียของคนอื่นๆ ทิ้ง',
-      isVideoThumnail: false,
+      isVideoThumnail: true,
+      isPodcast: true,
+      isMuted: true,
       scheme: Appearance.getColorScheme()
     };
   }
@@ -44,7 +51,6 @@ class DetailScreen extends BaseComponent {
       console.log("colorScheme : ", colorScheme)
     })
   }
-
   navigateBack() {
     DeviceEventEmitter.emit('audioBarActive', {
       isActive: false,
@@ -116,7 +122,7 @@ class DetailScreen extends BaseComponent {
             Rating
           </Text>
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <AntDesign name={isRate = "staro"} color='white' size={30} />
+            <AntDesign name={"staro"} color='white' size={30} />
           </View>
         </View>
       </Modal>
@@ -124,31 +130,51 @@ class DetailScreen extends BaseComponent {
   }
 
   renderVideoThumbnail() {
+    const { isTeserPause, lastTap, isMuted } = this.state
+    const videoHeight = width * 9 / 16
     return (
       <TouchableOpacity
         activeOpacity={1}
+        // style={{ width: width, videoHeight: videoHeight }}
         onPress={() => {
           const now = Date.now()
           console.log('tab : ', now)
           if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-            this.player.presentFullscreenPlayer()
+            {
+              Platform.OS == 'android' ?
+                this.player.presentFullscreenPlayer()
+                :
+                null
+            }
+
           } else {
-            this.setState({ lastTap: now, isTeserPause: !isTeserPause })
+            this.setState({ lastTap: now, isMuted: !isMuted })
           }
         }}
       >
         <Video
           style={{
             width: width,
-            height: width * 9 / 16,
+            height: videoHeight,
           }}
           paused={isTeserPause}
+          muted={isMuted}
           source={require('../../../../Videos/video_01.mp4')}
           ref={(ref) => {
             this.player = ref
           }}
+          resizeMode={"cover"}
           onError={(error) => { console.log('video error : ', error) }}
         />
+
+        <View style={{ width: 30, height: 30, bottom: 10, right: 15, position: 'absolute' }}>
+          {isMuted ?
+            <Ionicons name="volume-mute" color='white' size={24} />
+            :
+            <Ionicons name="volume-high" color='white' size={24} />
+          }
+
+        </View>
       </TouchableOpacity>
     )
   }
@@ -178,27 +204,31 @@ class DetailScreen extends BaseComponent {
   }
 
   render() {
-    const { isTeserPause, lastTap, isRate, isVideoThumnail } = this.state
+    const { isTeserPause, lastTap, isRate, isVideoThumnail, isPodcast, isBookmark } = this.state
     return (
       <View style={Styles.container}>
         <SafeAreaView>
-          {this.renderRating()}
           {isVideoThumnail ?
             this.renderVideoThumbnail()
             :
             this.renderPictureThumnail()
           }
-
         </SafeAreaView>
         <TouchableOpacity
           activeOpacity={0.9}
           style={{ width: width, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}
           onPress={() => {
+            this.setState({ isTeserPause: true })
             DeviceEventEmitter.emit('navigateToPodcastPlayer')
           }}
         >
           <View style={{ width: '92%', backgroundColor: '#DFB445', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-            <Entypo name="controller-play" color='white' size={26} />
+            {isPodcast ?
+              <Feather style={{ marginRight: 5 }} name="headphones" color='white' size={26} />
+              :
+              <Entypo style={{ marginRight: 5 }} name="controller-play" color='white' size={26} />
+            }
+
             <Text style={[Styles.title, { marginVertical: 10 }]}>
               PLAY
           </Text>
@@ -216,10 +246,16 @@ class DetailScreen extends BaseComponent {
             <TouchableOpacity
               activeOpacity={0.9}
               style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
-              onPress={() => { }}
+              onPress={() => {
+                this.setState({ isBookmark: !isBookmark })
+              }}
             >
-              <AntDesign name="plus" color='white' size={30} />
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Wish List</Text>
+              {isBookmark ?
+                <FontAwesome name="bookmark" color='white' size={24} />
+                :
+                <FontAwesome name="bookmark-o" color='white' size={24} />
+              }
+              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -246,8 +282,18 @@ class DetailScreen extends BaseComponent {
                   .catch((err) => { err && console.log(err); });
               }}
             >
-              <AntDesign name="sharealt" color='white' size={30} />
+              <FontAwesome5 name="share" color='white' size={30} />
               <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
+              onPress={() => {
+
+              }}
+            >
+              <MaterialCommunityIcons name="download" color='white' size={30} />
+              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
             </TouchableOpacity>
           </View>
 
@@ -258,7 +304,7 @@ class DetailScreen extends BaseComponent {
 
         </ScrollView>
 
-        <SafeAreaView style={{ position: 'absolute', right: 24 }}>
+        <SafeAreaView style={{ position: 'absolute', right: 24, top: 7 }}>
           <TouchableOpacity
             onPress={() => {
               this.props.navigation.popToTop()
@@ -267,7 +313,7 @@ class DetailScreen extends BaseComponent {
             <AntDesign name="closecircle" color='white' size={24} />
           </TouchableOpacity>
         </SafeAreaView>
-        <SafeAreaView style={{ position: 'absolute', left: 24 }}>
+        <SafeAreaView style={{ position: 'absolute', left: 24, top: 5 }}>
           <TouchableOpacity
             onPress={() => {
               this.navigateBack()

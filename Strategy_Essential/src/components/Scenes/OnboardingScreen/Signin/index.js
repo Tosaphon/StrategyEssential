@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import BaseComponent from "../../../Utility/BaseComponent";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
@@ -14,7 +13,7 @@ class Signin extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading:false
+      isLoading: false
     };
   }
 
@@ -56,20 +55,20 @@ class Signin extends BaseComponent {
   }
 
   async signin() {
-    await AsyncStorage.setItem('token','test')
+    await AsyncStorage.setItem('token', 'test')
     this.props.navigation.navigate('ConsentsScreen')
   }
 
   render() {
     return (
       <View style={Styles.container}>
-        {this.renderHeader("Signin", this.navigateBack)}
+        {this.renderHeader("", this.navigateBack)}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
-            <View style={[Styles.textInputView,{ marginTop: 40 }]}>
+            <View style={[Styles.textInputView, { marginTop: 40 }]}>
               <TextInput
                 placeholder="Email or phone number"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -86,10 +85,10 @@ class Signin extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <View style={[Styles.textInputView]}>
+            <View style={[Styles.textInputView, Styles.textInput]}>
               <TextInput
                 placeholder="Password"
-                style={[Styles.title, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, }]}
                 secureTextEntry={true}
                 allowFontScaling={false}
                 value={this.state.passwrod}
@@ -181,7 +180,7 @@ const ScreenStyles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  
+
   headerTitle: {
     color: 'white',
     fontSize: 20

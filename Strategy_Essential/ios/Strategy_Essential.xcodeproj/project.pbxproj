@@ -25,6 +25,7 @@
 		6FF32700A544412383BAF5DA /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D0ED493A5834A1584FCD0FC /* FontAwesome5_Regular.ttf */; };
 		7CB78F69460141E1BC8F9286 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D9B93A2349C4DEFBBC3BFE1 /* FontAwesome5_Solid.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		84BFC53296614C869B86A2C8 /* EkkamaiNew-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CBA989A1E3AD4ECCA28B67B2 /* EkkamaiNew-Regular.ttf */; };
 		8C5E7AD9225F371888F59956 /* libPods-Strategy_Essential.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8F28ABA5690E7A8CDDC4CCF /* libPods-Strategy_Essential.a */; };
 		95FB19978BBF4E729D315A88 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F53F56BD72647A994A1D1E5 /* Octicons.ttf */; };
 		A4DA7159E9DC4BC6860D1039 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59640509654942DC8601D416 /* FontAwesome.ttf */; };
@@ -97,6 +98,7 @@
 		B058E295141E4945AE4009C8 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		B8F28ABA5690E7A8CDDC4CCF /* libPods-Strategy_Essential.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Strategy_Essential.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA84DF244C004828BE2C299C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		CBA989A1E3AD4ECCA28B67B2 /* EkkamaiNew-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "EkkamaiNew-Regular.ttf"; path = "../assets/fonts/EkkamaiNew-Regular.ttf"; sourceTree = "<group>"; };
 		CC973ED5221A44F2BB7D3AA0 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		D5415E514E45861D77BD15EB /* Pods-Strategy_Essential.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Strategy_Essential.debug.xcconfig"; path = "Target Support Files/Pods-Strategy_Essential/Pods-Strategy_Essential.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -190,6 +192,7 @@
 				1F53F56BD72647A994A1D1E5 /* Octicons.ttf */,
 				CA84DF244C004828BE2C299C /* SimpleLineIcons.ttf */,
 				7CAB57BDD17743FC81196E2A /* Zocial.ttf */,
+				CBA989A1E3AD4ECCA28B67B2 /* EkkamaiNew-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -352,6 +355,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = 92SB3N9NMR;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -417,6 +421,7 @@
 				95FB19978BBF4E729D315A88 /* Octicons.ttf in Resources */,
 				C8C494F96B234D49B3E0A5CE /* SimpleLineIcons.ttf in Resources */,
 				3D6C5879202F43518195E0EB /* Zocial.ttf in Resources */,
+				84BFC53296614C869B86A2C8 /* EkkamaiNew-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -795,6 +800,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 92SB3N9NMR;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Strategy_Essential/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -803,10 +809,11 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.supapass.SupaPassPlayer.strategyessential;
 				PRODUCT_NAME = Strategy_Essential;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -818,6 +825,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 92SB3N9NMR;
 				INFOPLIST_FILE = Strategy_Essential/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -825,9 +833,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.supapass.SupaPassPlayer.strategyessential;
 				PRODUCT_NAME = Strategy_Essential;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

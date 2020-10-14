@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, DeviceEventEmitter } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, DeviceEventEmitter, ScrollView } from 'react-native';
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import BaseComponent from '../../Utility/BaseComponent'
 
 import Styles from '../../BaseView/Styles';
 import Feather from 'react-native-vector-icons/Feather';
-import { ScrollView } from 'react-native-gesture-handler';
 
 
 const { width, height } = Dimensions.get('screen')
 
 const headerSection = {
-  Home: 'Home',
   Videos: 'Videos',
   Podcasts: 'Podcasts',
   Articles: 'Articles'
@@ -22,11 +20,12 @@ class SearchScreen extends BaseComponent {
     this.state = {
       ...this.state,
       searchBegin: false,
-      selectedSection: headerSection.Home,
+      selectedSection: headerSection.Videos,
       valueHome: 0,
       valueVideos: 0,
       valuePodcasts: 0,
       valueArticles: 0,
+      keyword:'',
       scheme: Appearance.getColorScheme()
     }
   }
@@ -40,7 +39,6 @@ class SearchScreen extends BaseComponent {
     });
     Appearance.addChangeListener(({ colorScheme }) => {
       this.setState({ scheme: colorScheme })
-      console.log("colorScheme : ", colorScheme)
     })
   }
 
@@ -104,17 +102,24 @@ class SearchScreen extends BaseComponent {
         }}>
           <Feather name="search" color='gray' size={26} style={{ marginLeft: 16, marginVertical: 4 }} />
           <TextInput
-            style={{ marginLeft: 8, flex: 1 }}
+            style={[Styles.textInput,{ marginLeft: 8, flex: 1, color: 'white' }]}
             placeholder='Search'
             placeholderTextColor='gray'
             onFocus={() => { this.setState({ searchBegin: true }) }}
+            onChangeText={async text => {
+              await this.setState({ keyword: text });
+            }}
+            value={this.state.keyword}
+            autoFocus={true}
+            autoCorrect={false}
+            autoCapitalize="none"
           />
         </View>
         {this.state.searchBegin ?
           <View style={{ flex: 0.15 }}>
             <TouchableOpacity
               onPress={() => {
-                this.setState({ searchBegin: false })
+                this.setState({ searchBegin: false,keyword:"" })
                 Keyboard.dismiss(0)
               }}
             >
@@ -129,24 +134,15 @@ class SearchScreen extends BaseComponent {
   }
 
   renderSectionHeader() {
-    const { valueHome, valueVideos, valuePodcasts, valueArticles, selectedSection, scheme } = this.state
+    const { valueVideos, valuePodcasts, valueArticles, selectedSection, scheme } = this.state
     return (
       <View style={{ width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
         <TouchableOpacity
           style={{ marginHorizontal: 10 }}
           activeOpacity={0.8}
-          onPress={() => { this.setState({ selectedSection: headerSection.Home }) }}
-        >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Home ? 'white' : 'gray' }]}>
-            Home ({valueHome})
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ marginHorizontal: 10 }}
-          activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Videos }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Videos ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Videos ? 'white' : 'gray' }]}>
             Videos ({valueVideos})
             </Text>
         </TouchableOpacity>
@@ -155,7 +151,7 @@ class SearchScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Podcasts }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Podcasts ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Podcasts ? 'white' : 'gray' }]}>
             Podcasts ({valuePodcasts})
             </Text>
         </TouchableOpacity>
@@ -164,7 +160,7 @@ class SearchScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Articles }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Articles ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Articles ? 'white' : 'gray' }]}>
             Articels ({valueArticles})
             </Text>
         </TouchableOpacity>
@@ -180,14 +176,14 @@ class SearchScreen extends BaseComponent {
   }
 
   render() {
+    const { scheme } = this.state
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle(scheme).container}>
         {this.renderFooter()}
         {this.renderSearchView()}
         {this.renderSectionHeader()}
         <ScrollView
           style={{ flex: 1, width: '100%' }}
-          // contentContainerStyle={{ flexGrow: 1, width: '100%' }}
           onTouchStart={() => { this.setState({ searchBegin: false }) }}
           onScrollBeginDrag={() => {
             this.setState({ searchBegin: false })

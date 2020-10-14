@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from "../../../Utility/BaseComponent";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
@@ -17,10 +17,11 @@ class OTPConfirmation extends BaseComponent {
             no2: '',
             no3: '',
             no4: '',
-            isLoading:false
+            isLoading: false
         };
     }
     submit() {
+        AsyncStorage.setItem("isMember","true")
         DeviceEventEmitter.emit('updateRootView');
         console.log("emit updateRootView")
     }
@@ -49,7 +50,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.TextInput1 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, { height: 32, }]}
+                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -60,7 +61,7 @@ class OTPConfirmation extends BaseComponent {
                                         await this.setState({ no1: text });
                                         await this.textInput2.focus()
                                     }}
-                                    autoFocus={false}
+                                    autoFocus={true}
                                     autoCorrect={false}
                                     autoCapitalize="none"
                                     returnKeyType={'next'}
@@ -72,7 +73,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput2 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, { height: 32, }]}
+                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -95,7 +96,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput3 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, { height: 32, }]}
+                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -118,7 +119,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput4 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, { height: 32, }]}
+                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
