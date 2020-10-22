@@ -67,13 +67,13 @@ class Regsitration extends BaseComponent {
   render() {
     return (
       <View style={Styles.container}>
-        {this.renderHeader("Register", this.navigateBack)}
+        {this.renderHeader("Register")}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
             <View style={[Styles.textInputView, { marginTop: 40 }]}>
               <TextInput
                 placeholder="Full Name"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -93,7 +93,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Email"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -114,7 +114,7 @@ class Regsitration extends BaseComponent {
               <TextInput
                 secureTextEntry={true}
                 placeholder="Password"
-                style={[Styles.title, Styles.textInput, { height: 32 }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -134,7 +134,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Confirm Password"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -144,6 +144,7 @@ class Regsitration extends BaseComponent {
                 onChangeText={async text => {
                   await this.setState({ confirmPassword: text });
                 }}
+                secureTextEntry={true}
                 autoFocus={false}
                 autoCorrect={false}
                 autoCapitalize="none"
@@ -159,7 +160,7 @@ class Regsitration extends BaseComponent {
             <View style={[Styles.textInputView]}>
               <TextInput
                 placeholder="Mobile Number"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={10}
                 keyboardType='phone-pad'

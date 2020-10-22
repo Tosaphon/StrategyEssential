@@ -22,9 +22,20 @@ class thirdScreen extends Component {
       <View style={[Styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'blue' }]}>
         <Image
           style={[Styles.container, { position: 'absolute' }]}
-          source={require('../../../../images/Onboarding/Onboarding_03.png')}
-          resizeMode='contain'
+          source={require('../../../../images/Onboarding/Onboarding_03.jpg')}
+          resizeMode='cover'
         />
+        <View style={{ position: 'absolute', backgroundColor: 'black', opacity: 0.6, width: width, height: height }} />
+        <View style={{ position: 'absolute', width: width, height: height, justifyContent: 'flex-start', alignItems: 'center' }}>
+          <Text style={[Styles.title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
+            แก่นกลยุทธ์+
+            </Text>
+          <Text style={[Styles.title, { fontSize: 16, marginBottom: 10,marginTop:300, marginHorizontal: 24, textAlign: 'center' }]}>
+            Save content to your private reading list for offline reading{'\n\n'}
+            Download videos and podcast for offline viewing{'\n\n'}
+            Stay up to date when new content is released
+            </Text>
+        </View>
         <View style={{ position: 'absolute', bottom: 80, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
           <TouchableOpacity
             style={{ marginHorizontal: 20 }}
@@ -32,8 +43,18 @@ class thirdScreen extends Component {
               this.props.navigation.navigate('SigninStackScreen');
             }}
           >
-            <View style={{ backgroundColor: 'white', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={{}}> GET START </Text>
+            <View style={{ paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
+              <Text style={[Styles.title]}> SKIP </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginHorizontal: 20 }}
+            onPress={() => {
+              this.props.navigation.navigate('SigninStackScreen');
+            }}
+          >
+            <View style={{ backgroundColor: '#dfb445', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
+              <Text style={[Styles.title, { color: 'black' }]}>  GET STARTD </Text>
             </View>
           </TouchableOpacity>
         </View>

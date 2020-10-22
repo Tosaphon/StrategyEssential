@@ -22,9 +22,18 @@ class secondScreen extends Component {
       <View style={[Styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'yellow' }]}>
         <Image
           style={[Styles.container, { position: 'absolute' }]}
-          source={require('../../../../images/Onboarding/Onboarding_02.png')}
-          resizeMode='contain'
+          source={require('../../../../images/Onboarding/Onboarding_02.jpg')}
+          resizeMode='cover'
         />
+        <View style={{ position: 'absolute', backgroundColor: 'black', opacity: 0.6, width: width, height: height }} />
+        <View style={{ position: 'absolute', width: width, height: height, justifyContent: 'flex-start', alignItems: 'center' }}>
+          <Text style={[Styles.title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
+            แก่นกลยุทธ์+
+            </Text>
+          <Text style={[Styles.title, { fontSize: 20, marginBottom: 10, marginTop: 300, marginHorizontal: 24, textAlign: 'center' }]}>
+            This app allows you to discover exclusive content in the form of post, video, and podcast in the following categories:
+            </Text>
+        </View>
         <View style={{ position: 'absolute', bottom: 80, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
           <TouchableOpacity
             style={{ marginHorizontal: 20 }}
@@ -33,7 +42,7 @@ class secondScreen extends Component {
             }}
           >
             <View style={{ paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={{}}> SKIP </Text>
+              <Text style={[Styles.title]}> SKIP </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -42,8 +51,8 @@ class secondScreen extends Component {
               this.props.navigation.navigate('ThirdScreen');
             }}
           >
-            <View style={{ backgroundColor: 'white', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={{}}> NEXT </Text>
+            <View style={{ backgroundColor: '#dfb445', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
+              <Text style={[Styles.title, { color: 'black' }]}>  NEXT </Text>
             </View>
           </TouchableOpacity>
         </View>

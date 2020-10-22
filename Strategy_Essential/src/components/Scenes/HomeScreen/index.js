@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Image, Dimensions, Platform, DeviceEventEmitter, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, Image, Dimensions, Platform, DeviceEventEmitter, TouchableOpacity, Linking } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from '../../Utility/BaseComponent'
 import Styles from '../../BaseView/Styles';
 import Feather from 'react-native-vector-icons/Feather';
-import Foundation from 'react-native-vector-icons/Foundation';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
+import Foundation from 'react-native-vector-icons/Foundation';
+import Modal from 'react-native-modal';
 import axios from 'axios'
 import { Appearance, useColorScheme } from 'react-native-appearance';
 
@@ -23,6 +25,7 @@ class HomeScreen extends BaseComponent {
       access_token: '',
       scheme: Appearance.getColorScheme(),
       toptabHeight: 0,
+      showPopup: true,
       mockThumnail: [
         {
           url: require('../../../images/mockup/podcast_01.png'),
@@ -44,7 +47,6 @@ class HomeScreen extends BaseComponent {
           url: require('../../../images/mockup/podcast_05.png'),
           title: 'World Trending'
         },
-
       ]
     };
   }
@@ -61,7 +63,9 @@ class HomeScreen extends BaseComponent {
       console.log("colorScheme : ", colorScheme)
     })
   }
+  dismissPopup() {
 
+  }
 
   async setTabbarBottomHeight(height) {
     try {
@@ -111,7 +115,8 @@ class HomeScreen extends BaseComponent {
         console.log(response);
       });
   }
-  switchToScreen(screenName) {
+  async switchToScreen(screenName) {
+    await AsyncStorage.setItem('isPodcast', 'false')
     this.props.navigation.navigate(screenName, { isPodcast: false })
   }
 
@@ -156,6 +161,7 @@ class HomeScreen extends BaseComponent {
 
       videoList.push(
         <TouchableOpacity
+          key={i}
           activeOpacity={0.8}
           style={{ flexDirection: 'column', width: thumnailWidth, marginRight: 10, marginLeft: i == 0 ? 20 : 10, backgroundColor: '#111' }}
           onPress={() => {
@@ -193,10 +199,56 @@ class HomeScreen extends BaseComponent {
     )
   }
 
+  renderPopUpModal() {
+    const imageWidth = width * 2 / 3
+    const imageHeight = imageWidth * 960 / 650
+    return (
+      <Modal
+        isVisible={this.state.showPopup}
+        hasBackdrop={true}
+        style={{ margin: 0, width: width, height: height }}
+      // backdropColor='black'
+      // backdropOpacity={0.4}
+      >
+        <View style={{ width: width, height: height, position: 'absolute', backgroundColor: 'black', opacity: 0.5, }} />
+        <View style={{ width: width, height: height, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ width: imageWidth, alignItems: 'flex-end' }}>
+            <TouchableOpacity
+              onPress={() => { this.setState({ showPopup: false }) }}>
+              <AntDesign name="closecircle" color='white' size={26} style={{ marginTop: -30, marginRight: -24 }} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: 'white' }}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                const url = "https://www.facebook.com/110765340497594/posts/163228651917929/?extid=0&d=n"
+                Linking.canOpenURL(url).then(supported => {
+                  if (supported) {
+                    Linking.openURL(url);
+                  } else {
+                    console.log("Don't know how to open URI: " + this.props.url);
+                  }
+                });
+                this.setState({ showPopup: false })
+              }}>
+              <Image
+                style={{ width: imageWidth, height: imageHeight, }}
+                source={require('../../../images/popup.jpg')}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </Modal>
+    )
+  }
+
   render() {
     const { scheme } = this.state
     return (
       <View style={this.getStyle(scheme).container}>
+        {this.renderPopUpModal()}
         <SafeAreaView
           ///for detect tabbar top height
           style={{ width: width, top: 0 }}
@@ -236,7 +288,7 @@ class HomeScreen extends BaseComponent {
         {/* {this.renderHeaderBG(this.state.toptabHeight, this.state.scheme)} */}
         <View
           ///for detect tabbar bottom height
-          style={{ position: 'absolute', width: width, bottom: 0, height: 10,}}
+          style={{ position: 'absolute', width: width, bottom: 0 }}
           onLayout={event => {
             const bottom = height - event.nativeEvent.layout.y
             this.setTabbarBottomHeight(bottom)

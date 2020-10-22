@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance, TouchableOpacity } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import iid from '@react-native-firebase/iid';
 import RootStack from '../navigation/RootNavigation'
 import OnboardingNavigation from '../navigation/OnboardingNavigation'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -25,7 +27,7 @@ class App extends Component {
       isPodcastPlay: false,
       isShowPodCastPlayer: false,
       loadingPreload: true,
-      podcastCurrentTime: 0
+      currentTime: 0
     };
   }
   componentDidMount() {
@@ -35,10 +37,27 @@ class App extends Component {
     this.eventListener = DeviceEventEmitter.addListener('onBoardingIndicator', this.handleSlideIndicator);
     this.eventListener = DeviceEventEmitter.addListener('updateRootView', this.handleUpdateRootView);
     AppState.addEventListener("change", this._handleAppStateChange);
+    this.getToken()
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  async getToken() {
+    const token = await iid().getToken();
+    console.log('token: ', token);
+  }
+
+  async requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
   }
 
   onloadPreload = async (isMember) => {
@@ -73,6 +92,7 @@ class App extends Component {
     await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive })
     const time = await Math.round(event.currentTime)
     this.player && this.player.seek(time)
+    console.log("seek time : ", event)
   }
 
   async getTabbarBottomHeight() {
@@ -85,6 +105,14 @@ class App extends Component {
   dismisPodcastPlayer = async () => {
     await this.setState({ isShowPodCastPlayer: false })
     console.log("isShowPodCastPlayer : ", this.state.isShowPodCastPlayer)
+  }
+  seek(time) {
+    time = Math.round(time);
+    this.player && this.player.seek(time);
+    this.setState({
+      currentTime: time,
+      isPodcastPlay: false,
+    });
   }
   async setTime(data) {
     await this.setState({ currentTime: Math.floor(data.currentTime) });
@@ -163,7 +191,11 @@ class App extends Component {
     return (
       <View style={{ width: width, height: height }}>
         <RootStack />
-        <PodcastScreen isVisible={this.state.isShowPodCastPlayer} dismiss={this.dismisPodcastPlayer} />
+        <PodcastScreen
+          isVisible={this.state.isShowPodCastPlayer}
+          dismiss={this.dismisPodcastPlayer}
+          currentTime={this.state.currentTime}
+        />
         {this.renderAudioBar()}
       </View>
     )

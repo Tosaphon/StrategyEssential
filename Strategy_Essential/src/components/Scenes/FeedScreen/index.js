@@ -104,7 +104,7 @@ class FeedScreen extends BaseComponent {
                             onPress={() => {
                                 const options = {
                                     title: 'Share via',
-                                    message: this.state.title,
+                                    message: "Every moment spent on planning saves three or four in execution",
                                     url: 'some share url',
                                     filename: 'test', // only for base64 file in Android
                                 };

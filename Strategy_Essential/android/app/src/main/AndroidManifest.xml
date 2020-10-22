@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.strategy_essential">
+  package="com.supapass.android.player.strategyessential">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

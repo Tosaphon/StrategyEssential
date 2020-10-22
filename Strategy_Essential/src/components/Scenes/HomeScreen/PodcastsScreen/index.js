@@ -20,7 +20,29 @@ class PodcastsScreen extends BaseComponent {
     this.state = {
       ...this.state,
       access_token: '',
-      scheme: Appearance.getColorScheme()
+      scheme: Appearance.getColorScheme(),
+      mockThumnail: [
+        {
+          url: require('../../../../images/mockup/podcast_01.png'),
+          title: 'New Release'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_02.png'),
+          title: 'Trending Now'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_03.png'),
+          title: 'Special For You'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_04.png'),
+          title: 'Money'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_05.png'),
+          title: 'World Trending'
+        },
+      ]
     };
   }
 
@@ -78,8 +100,9 @@ class PodcastsScreen extends BaseComponent {
         console.log(response);
       });
   }
-  switchToScreen(screenName) {
-    this.props.navigation.navigate(screenName, { isPodcast: true })
+  async switchToScreen(screenName) {
+    await AsyncStorage.setItem('isPodcast','true')
+    this.props.navigation.navigate(screenName, { isPodcast: false })
   }
 
   renderIpadHeader() {
@@ -92,9 +115,10 @@ class PodcastsScreen extends BaseComponent {
     }
   }
 
-  renderCategory() {
+  renderCategory(index) {
+    const { mockThumnail } = this.state
     let videoList = []
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < mockThumnail.length; i++) {
       videoList.push(
         <TouchableOpacity
           key={i}
@@ -104,7 +128,7 @@ class PodcastsScreen extends BaseComponent {
           }}
         >
           <Image style={{ width: 132, height: 74, backgroundColor: 'white', marginRight: 10, marginLeft: i == 0 ? 20 : 10 }}
-            source={require('../../../../images/mockup/mock_video_thumnail01.png')}
+            source={mockThumnail[Math.floor(Math.random() * mockThumnail.length - 1) + 1].url}
           />
         </TouchableOpacity>
       )
@@ -112,8 +136,8 @@ class PodcastsScreen extends BaseComponent {
     return (
       <View style={{ width: width, marginTop: 20 }}>
         <Text style={[Styles.title, { marginLeft: 20, marginVertical: 10 }]}>
-          Trending Now
-          </Text>
+          {mockThumnail[index].title}
+        </Text>
         <ScrollView
           showsHorizontalScrollIndicator={false}
           horizontal={true}>
@@ -145,15 +169,15 @@ class PodcastsScreen extends BaseComponent {
                 width: width,
                 height: width * 800 / 1200
               }}
-              resizeMode='contain'
-              source={require('../../../../images/mockup/cover.jpg')}
+              resizeMode='cover'
+              source={require('../../../../images/mockup/podcast_04.png')}
             />
           </TouchableOpacity>
-          {this.renderCategory()}
-          {this.renderCategory()}
-          {this.renderCategory()}
-          {this.renderCategory()}
-          {this.renderCategory()}
+          {this.renderCategory(0)}
+          {this.renderCategory(1)}
+          {this.renderCategory(2)}
+          {this.renderCategory(3)}
+          {this.renderCategory(4)}
           {/* <Image
             style={{ top: 0, bottom: 0, left: 0, right: 0 }}
             resizeMode='stretch'

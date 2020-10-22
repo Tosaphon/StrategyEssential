@@ -26,7 +26,7 @@ class AppSetting extends BaseComponent {
     const { isThaiLanguage, isWifiOnly ,isLightMode} = this.state
     return (
       <View style={Styles.container}>
-        {this.renderHeader("App Settings", this.navigateBack)}
+        {this.renderHeader("App Settings")}
         <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
           <SafeAreaView style={[Styles.container, { width: width }]}>
             <View style={{ width: width }}>

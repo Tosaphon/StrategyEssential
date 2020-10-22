@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "126783565070",
+    "firebase_url": "https://strategyessentialapp-dc635.firebaseio.com",
+    "project_id": "strategyessentialapp-dc635",
+    "storage_bucket": "strategyessentialapp-dc635.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126783565070:android:667fcc2908406df112bb5f",
+        "android_client_info": {
+          "package_name": "com.supapass.android.player.strategyessential"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126783565070-gpuckrrdrql7imvggaausf2n73bng1jf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxKy1q-E4H5ZLgEIBikeY9Jyj4d8nAVJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126783565070-gpuckrrdrql7imvggaausf2n73bng1jf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "126783565070-p7t7r7scuu52hag81njuaatuo4pa17lu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.supapass.SupaPassPlayer.strategyessential"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

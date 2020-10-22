@@ -1,6 +1,7 @@
 import React from 'react';
 import { DeviceEventEmitter, Dimensions, Image, SafeAreaView, Text, TouchableWithoutFeedback, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Appearance, useColorScheme } from 'react-native-appearance';
+import AsyncStorage from '@react-native-community/async-storage';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -15,6 +16,8 @@ import Styles from '../../../BaseView/Styles';
 import BaseComponent from '../../../Utility/BaseComponent';
 import LinearGradient from 'react-native-linear-gradient';
 import VideoPlayer from 'react-native-video-controls';
+
+import RNBackgroundDownloader from 'react-native-background-downloader';
 
 const { width, height } = Dimensions.get('screen')
 const DOUBLE_PRESS_DELAY = 300;
@@ -33,8 +36,9 @@ class DetailScreen extends BaseComponent {
       title: 'วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา',
       subTitle: 'ใน Podcast The Secret Sauce ตอนนี้ ผมจะมาพูดคุยถึงขั้นตอนวางกลยุทธ์ในเชิงเครื่องมือ หรือ Tools ขั้นตอนเหล่านี้จะช่วยนำทางเราและสามารถนำไปใช้ได้จริงกับทั้งบริษัท และส่วนบุคคล โดยปกติแล้วเมื่อพูดถึงการทำกลยุทธ์ บริษัทต่างๆ มักจะให้เอาคนที่เกี่ยวข้องทั้งหมดมารวมกัน หา Facilitator สักคนเพื่อมาทำ SWOT ด้วยกัน แปะโพสต์อิทไอเดียมากมาย แล้วโหวตให้คะแนนกัน เพราะไม่มีใครกล้าฆ่าไอเดียของคนอื่นๆ ทิ้ง',
       isVideoThumnail: true,
-      isPodcast: true,
+      isPodcast: false,
       isMuted: true,
+      isVideoPlayed: false,
       scheme: Appearance.getColorScheme()
     };
   }
@@ -50,7 +54,27 @@ class DetailScreen extends BaseComponent {
       this.setState({ scheme: colorScheme })
       console.log("colorScheme : ", colorScheme)
     })
+    // console.log("isPodcast : ", this.props.route.params.isPodcast)
+    this.getProps()
   }
+
+  async getProps() {
+    const isPodcast = await AsyncStorage.getItem('isPodcast')
+    this.setState({ isPodcast: JSON.parse(isPodcast) })
+  }
+
+  downloadContent() {
+    console.log("emit")
+    DeviceEventEmitter.emit('downloadContents',
+      {
+        title: 'Strategy Approach แนวทางการวางกลยุทธ์ที่เหมาะกับคุณที่สุดทำอย่างไร | Strategy Clinic EP.1',
+        desc: 'เมื่อความสำคัญของกลยุทธ์เพิ่มขึ้นอย่างทวีคูณในช่วงวิกฤต ตอนแรกของซีรีส์ Strategy Clinic ชวนคุณมองกลับไปที่ก้าวแรกของการวางกลยุทธ์ วาดตาราง 2x2 เพื่อหารูปแบบกลยุทธ์ที่เหมาะสมกับองค์กรของคุณเคน นครินทร์ คุยกับ ดร.ธนัย ชรินทร์สาร ที่ปรึกษาและวิทยากรด้านกลยุทธ์ ผู้มีประสบการณ์กว่า 20 ปี เจ้าของ Facebook Group Strategy Essential',
+        image: require('../../../../images/mockup/podcast_01.png'),
+        fill: 0,
+        date: '19 SEP 2020'
+      })
+  }
+
   navigateBack() {
     DeviceEventEmitter.emit('audioBarActive', {
       isActive: false,
@@ -102,33 +126,6 @@ class DetailScreen extends BaseComponent {
     }
     return contentsList
   }
-
-  renderRating() {
-    return (
-      <Modal
-        isVisible={this.state.isShowRating}
-        hasBackdrop={true}
-        // backdropColor='black'
-        // backdropOpacity={0.4}
-        customBackdrop={
-          <TouchableWithoutFeedback
-            onPress={() => { this.setState({ isShowRating: false }) }}>
-            <View style={{ flex: 1 }} />
-          </TouchableWithoutFeedback>
-        }
-      >
-        <View style={{ backgroundColor: 'white', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={Styles.title}>
-            Rating
-          </Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <AntDesign name={"staro"} color='white' size={30} />
-          </View>
-        </View>
-      </Modal>
-    )
-  }
-
   renderVideoThumbnail() {
     const { isTeserPause, lastTap, isMuted } = this.state
     const videoHeight = width * 9 / 16
@@ -204,9 +201,23 @@ class DetailScreen extends BaseComponent {
   }
 
   render() {
-    const { isTeserPause, lastTap, isRate, isVideoThumnail, isPodcast, isBookmark } = this.state
+    const { isTeserPause, lastTap, isRate, isVideoThumnail, isPodcast, isBookmark, isVideoPlayed } = this.state
     return (
       <View style={Styles.container}>
+        <Video
+          pictureInPicture={true}
+          fullscreen={true}
+          playInBackground={true}
+          paused={!isVideoPlayed}
+          onFullscreenPlayerWillPresent={() => {
+            this.setState({ isVideoPlayed: !isVideoPlayed })
+          }}
+          source={require('../../../../Videos/video_01.mp4')}
+          ref={(ref) => {
+            this.fullScreenPlayer = ref
+          }}
+          onError={(error) => { console.log('video error : ', error) }}
+        />
         <SafeAreaView>
           {isVideoThumnail ?
             this.renderVideoThumbnail()
@@ -219,7 +230,13 @@ class DetailScreen extends BaseComponent {
           style={{ width: width, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}
           onPress={() => {
             this.setState({ isTeserPause: true })
-            DeviceEventEmitter.emit('navigateToPodcastPlayer')
+
+            if (isPodcast) {
+              DeviceEventEmitter.emit('navigateToPodcastPlayer')
+            } else {
+              // this.props.navigation.navigate('VideoFullScreen')
+              this.fullScreenPlayer.presentFullscreenPlayer()
+            }
           }}
         >
           <View style={{ width: '92%', backgroundColor: '#DFB445', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
@@ -264,8 +281,8 @@ class DetailScreen extends BaseComponent {
                 this.setState({ isRate: !isRate, isShowRating: true })
               }}
             >
-              <AntDesign name={isRate ? "star" : "staro"} color='white' size={30} />
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Rate</Text>
+              <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
+              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -289,7 +306,7 @@ class DetailScreen extends BaseComponent {
               activeOpacity={0.9}
               style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
               onPress={() => {
-
+                this.downloadContent()
               }}
             >
               <MaterialCommunityIcons name="download" color='white' size={30} />
@@ -320,7 +337,7 @@ class DetailScreen extends BaseComponent {
             }}
           >
             <Ionicons name="arrow-back-circle" color='white' size={30} />
-          </TouchableOpacity>
+          </  TouchableOpacity>
         </SafeAreaView>
       </View>
     );

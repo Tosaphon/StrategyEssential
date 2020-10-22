@@ -5,6 +5,7 @@ import Styles from '../../../BaseView/Styles'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from "../../../Utility/BaseComponent";
+import { WebView } from 'react-native-webview';
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
 
@@ -29,9 +30,14 @@ class Consent extends BaseComponent {
         const { isAgree } = this.state
         return (
             <View style={[Styles.container, { alignItems: 'center' }]}>
-                {this.renderHeader("Consents", this.navigateBack)}
-                <ScrollView style={{ flex: 1, width: '85%', backgroundColor: 'white' }}>
-                </ScrollView>
+                {this.renderHeader("Consents")}
+                <View
+                    style={{ flex: 1, width: '85%', backgroundColor: 'white' }}
+                >
+                    <WebView
+
+                        source={{ uri: 'https://www.supapass.com/user-terms/' }} />
+                </View>
                 <View style={{ marginVertical: 10, width: '85%', flexDirection: 'row' }}>
                     <TouchableOpacity
                         style={{ flexDirection: 'row', width: '100%', alignItems: 'center', }}
@@ -47,8 +53,8 @@ class Consent extends BaseComponent {
                             I Agree to the consents
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
-                    </TouchableOpacity>
+                    {/* <TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginBottom: 40 }}>
                     <TouchableOpacity
@@ -59,7 +65,7 @@ class Consent extends BaseComponent {
                         disabled={!isAgree}
                     >
                         <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: isAgree ? '#dfb445' : 'gray', borderRadius: 10 }]}>
-                            <Text style={[Styles.title,{}]}>
+                            <Text style={[Styles.title, {}]}>
                                 NEXT
                             </Text>
                         </View>

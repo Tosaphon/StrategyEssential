@@ -5,6 +5,12 @@ import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-community/google-signin';
+
 import BaseComponent from "../../../Utility/BaseComponent";
 const { width, height } = Dimensions.get('screen')
 const boxWidth = width * 3 / 4
@@ -43,13 +49,29 @@ class Signin extends BaseComponent {
       });
     });
   }
-  navigateBack = () => {
-    this.props.navigation.goBack()
-  }
+
+  signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      this.setState({ userInfo });
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
 
   validateEmail() {
     console.log("valid")
   }
+  
   validatePassword() {
     console.log("valid")
   }
@@ -62,13 +84,13 @@ class Signin extends BaseComponent {
   render() {
     return (
       <View style={Styles.container}>
-        {this.renderHeader("", this.navigateBack)}
+        {this.renderHeader("")}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
             <View style={[Styles.textInputView, { marginTop: 40 }]}>
               <TextInput
                 placeholder="Email or phone number"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -88,7 +110,7 @@ class Signin extends BaseComponent {
             <View style={[Styles.textInputView, Styles.textInput]}>
               <TextInput
                 placeholder="Password"
-                style={[Styles.title, Styles.textInput, { height: 32, }]}
+                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 secureTextEntry={true}
                 allowFontScaling={false}
                 value={this.state.passwrod}
@@ -116,9 +138,7 @@ class Signin extends BaseComponent {
               <View style={[
                 Styles.textInputView,
                 {
-                  borderColor: '#707070',
-                  borderWidth: 1,
-                  backgroundColor: 'transparent',
+                  backgroundColor: '#dfb445',
                   justifyContent: 'center'
                 }]}>
                 <Text style={[Styles.title]}>Sign in</Text>
@@ -152,6 +172,12 @@ class Signin extends BaseComponent {
             <Text style={Styles.title}>
               OR
               </Text>
+            <GoogleSigninButton
+              style={{ width: boxWidth, height: 48 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={this.signIn()}
+              disabled={this.state.isSigninInProgress} />
             <View style={{ width: boxWidth }}>
             </View>
             <Text style={[Styles.title, { width: boxWidth, textAlign: 'center' }]}>

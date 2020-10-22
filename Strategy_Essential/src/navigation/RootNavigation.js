@@ -20,6 +20,7 @@ import PodcastsScreen from '../components/Scenes/HomeScreen/PodcastsScreen'
 import ArticlesScreen from '../components/Scenes/HomeScreen/ArticlesScreen'
 import PodcastsPlayer from '../components/Scenes/HomeScreen/DetailScreen/podcastPlayer'
 import ArticleDetail from '../components/Scenes/HomeScreen/DetailScreen/articleDetail'
+import VideoFullScreen from '../components/Scenes/HomeScreen/DetailScreen/videoFullScreen'
 
 import SearchScreen from '../components/Scenes/SearchScreen'
 import DownloadsScreen from '../components/Scenes/DownloadsScreen'
@@ -29,6 +30,7 @@ import AppSettingScreen from '../components/Scenes/MoreScreen/AppSetting'
 import InboxScreen from '../components/Scenes/MoreScreen/InboxScreen'
 import WishListScreen from '../components/Scenes/MoreScreen/WishListScreen'
 import HelpScreen from '../components/Scenes/MoreScreen/HelpScreen'
+import PodcastsSavedScreen from '../components/Scenes/MoreScreen/PodcastsSavedScreen'
 
 import OnboardingNavigationStack from './OnboardingNavigation'
 
@@ -73,7 +75,8 @@ function SplashStackScreen() {
 
 function HomeStackTopTab() {
   const insets = useSafeAreaInsets();
-  const scheme = useColorScheme()
+  // const scheme = useColorScheme()
+  const scheme = 'dark'
   return (
     <TopTab.Navigator
       initialRouteName="HomeScreen"
@@ -110,6 +113,7 @@ function HomeStackScreen() {
       <NavigationStack.Screen name="HomeStackTopTab" component={HomeStackTopTab} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
       <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
+      <NavigationStack.Screen name="VideoFullScreen" component={VideoFullScreen} />
     </NavigationStack.Navigator>
   );
 }
@@ -168,13 +172,15 @@ function MoreStackScreen() {
       <NavigationStack.Screen name="WishListScreen" component={WishListScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
       <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
+      <NavigationStack.Screen name="PodcastsSavedScreen" component={PodcastsSavedScreen} />
     </NavigationStack.Navigator>
   );
 }
 
 
 function MobileRootStack() {
-  const scheme = useColorScheme()
+  // const scheme = useColorScheme()
+  const scheme = 'dark'
   return (
     <AppearanceProvider>
       <NavigationContainer theme={scheme === 'light' ? DefaultTheme : DarkTheme}>

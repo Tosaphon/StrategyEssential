@@ -5,6 +5,7 @@ import Styles from "../BaseView/Styles";
 import LoadingView from "../BaseView/LoadingView";
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const { width, height } = Dimensions.get('screen')
 
@@ -36,7 +37,7 @@ class BaseComponent extends Component {
         return <LoadingView visible={visible} />
     }
 
-    renderHeader(title, navigateBack) {
+    renderHeader(title, rightAction, enableEdit) {
         return (
             <View style={{
                 width: width,
@@ -52,18 +53,40 @@ class BaseComponent extends Component {
                 }}>
                     <TouchableOpacity
                         style={{
+                            width: '15%',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                         }}
-                        onPress={() => { navigateBack() }}
+                        onPress={() => { this.navigateBack() }}
                     >
                         <Ionicons name="chevron-back" color='white' size={26} />
                     </TouchableOpacity>
 
-                    <Text style={[Styles.title, { width: width - 60, textAlign: 'center', fontSize: 20 }]}>{title}</Text>
+                    <Text style={[Styles.title, { width: '70%', textAlign: 'center', fontSize: 20 }]}>{title}</Text>
+                    <TouchableOpacity
+                        style={{
+                            width: '15%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            opacity: rightAction ? 1 : 0
+                        }}
+                        onPress={() => {
+                            rightAction()
+                        }}
+                    >
+                        {enableEdit ?
+                            <Text style={[this.getStyle().title, { marginRight: 16, height: 26 }]}>
+                                Done
+                            </Text>
+                            :
+                            <MaterialIcons style={{ marginRight: 16 }} name="edit" color='white' size={26} />
+                        }
+                    </TouchableOpacity>
                 </SafeAreaView>
             </View>
         )
     }
-    renderHeaderBG(barHeight,scheme) {
+    renderHeaderBG(barHeight, scheme) {
         const darkTheme = [
             'rgba(0, 0, 0,1)',
             'rgba(0, 0, 0,1)',
@@ -82,7 +105,7 @@ class BaseComponent extends Component {
                 backgroundColor: scheme == 'light' ? 'white' : 'black',
                 alignItems: 'flex-start',
                 position: 'absolute',
-                height:barHeight,
+                height: barHeight,
             }}>
                 {/* <LinearGradient
                     colors={this.state.scheme == 'light' ? 'white' : 'black'}
@@ -141,7 +164,7 @@ class BaseComponent extends Component {
             title: {
                 color: scheme === 'light' ? 'black' : 'white',
                 fontFamily: 'SukhumvitSet-Bold',
-                fontWeight:'bold'
+                fontWeight: 'bold'
             },
             subTitle: {
                 color: scheme === 'light' ? 'black' : 'white',
@@ -155,7 +178,7 @@ class BaseComponent extends Component {
                 color: scheme === 'light' ? 'black' : 'white',
                 fontSize: 20,
                 fontFamily: 'SukhumvitSet-Bold',
-                fontWeight:'bold'
+                fontWeight: 'bold'
             },
             textInputView: {
                 backgroundColor: '#2e2e2f',

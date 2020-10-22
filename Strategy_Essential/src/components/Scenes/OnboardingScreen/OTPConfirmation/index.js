@@ -40,7 +40,7 @@ class OTPConfirmation extends BaseComponent {
     render() {
         return (
             <View style={Styles.container}>
-                {this.renderHeader("OTP Confirmation", this.navigateBack)}
+                {this.renderHeader("OTP Confirmation")}
                 <ScrollView style={{ flex: 1, width: '100%' }}>
                     <View style={ScreenStyles.container}>
                         <Text style={[Styles.title, { marginTop: 40 }]}>Ref Code is</Text>

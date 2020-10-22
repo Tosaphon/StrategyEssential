@@ -17,7 +17,7 @@ class HelpScreen extends BaseComponent {
     render() {
         return (
             <View style={Styles.container}>
-                {this.renderHeader("Help", this.navigateBack)}
+                {this.renderHeader("Help")}
                 <Text> index </Text>
             </View>
         );

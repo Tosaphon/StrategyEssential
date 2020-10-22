@@ -27,7 +27,7 @@ class PodcastPlayer extends BaseComponent {
         this.state = {
             isModalVisible: true,
             maximumTime: 1000,
-            currentTime: 0,
+            currentTime: this.props.currentTime,
             isPodcastPlay: true,
             isRate: false,
             isBookmark: false,
@@ -57,12 +57,12 @@ class PodcastPlayer extends BaseComponent {
     }
 
     backHandle = () => {
-        console.log("back")
         this.props.dismiss()
         DeviceEventEmitter.emit('audioBarActive', {
             isActive: true,
-            currentTime: this.state.currentTime
+            currentTime: this.state.currentTime + 1
         });
+
         return true;
     }
 
@@ -73,6 +73,7 @@ class PodcastPlayer extends BaseComponent {
         await this.props.dismiss()
         await DeviceEventEmitter.emit('audioBarActive', {
             isActive: true,
+            currentTime: this.state.currentTime
         });
     }
 
@@ -190,9 +191,9 @@ class PodcastPlayer extends BaseComponent {
                                 placeholderTextColor='gray'
                                 onFocus={() => { }}
                                 onChangeText={async text => {
-                                    // await this.setState({ keyword: text });
+                                    await this.setState({ savedTitle: text });
                                 }}
-                                value={this.state.keyword}
+                                value={this.state.savedTitle}
                                 autoFocus={true}
                                 autoCorrect={false}
                                 autoCapitalize="none"
@@ -213,7 +214,7 @@ class PodcastPlayer extends BaseComponent {
                             <TouchableOpacity
                                 activeOpacity={0.9}
                                 style={{ width: '50%', justifyContent: 'center', alignItems: 'center', borderTopWidth: 0.5, borderColor: '#707070' }}
-                                onPress={() => { 
+                                onPress={() => {
                                     this.confirmSavePodcast()
                                 }}
                             >
@@ -281,11 +282,11 @@ class PodcastPlayer extends BaseComponent {
                             activeOpacity={0.9}
                             style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
                             onPress={() => {
-                                this.setState({ isRate: !isRate, isShowRating: true })
+                                this.setState({ isRate: !isRate })
                             }}
                         >
                             <View style={{ width: 30, height: 30, justifyContent: 'center', alignItems: 'center' }}>
-                                <AntDesign name={isRate ? "star" : "staro"} color='white' size={30} />
+                                <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
                             </View>
                             <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Rate</Text>
                         </TouchableOpacity>

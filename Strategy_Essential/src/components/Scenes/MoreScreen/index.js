@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, ScrollView, SafeAreaView, TouchableOpacity, DeviceEventEmitter, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, Dimensions, ScrollView, SafeAreaView, TouchableOpacity, DeviceEventEmitter, StyleSheet, Image, Alert, Platform } from 'react-native';
 import BaseComponent from '../../Utility/BaseComponent'
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import Styles from '../../BaseView/Styles';
@@ -17,15 +17,39 @@ const switchScreenCase = {
   InboxScreen: 'InboxScreen',
   WishListScreen: 'WishListScreen',
   AppSettingScreen: 'AppSettingScreen',
-  HelpScreen: 'HelpScreen'
+  HelpScreen: 'HelpScreen',
+  PodcastsSavedScreen: 'PodcastsSavedScreen'
 }
 
 class MoreScreen extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      scheme: Appearance.getColorScheme()
-    };
+      scheme: Appearance.getColorScheme(),
+      mockThumnail: [
+        {
+          url: require('../../../images/mockup/podcast_01.png'),
+          title: 'New Release'
+        },
+        {
+          url: require('../../../images/mockup/podcast_02.png'),
+          title: 'Trending Now'
+        },
+        {
+          url: require('../../../images/mockup/podcast_03.png'),
+          title: 'Special For You'
+        },
+        {
+          url: require('../../../images/mockup/podcast_04.png'),
+          title: 'Money'
+        },
+        {
+          url: require('../../../images/mockup/podcast_05.png'),
+          title: 'World Trending'
+        },
+      ],
+      mockTitle: ['New Series available','Podcast Weekly updates','The Standard x Strategy Essential']
+    }
   }
 
   componentDidMount() {
@@ -36,8 +60,9 @@ class MoreScreen extends BaseComponent {
   }
 
   renderNotificationList() {
-    const { scheme } = this.state
-    const thumnailWidth = width / 4
+    const { scheme, mockThumnail ,mockTitle} = this.state
+    const thumnailWidth = Platform.isPad ? width / 4 : width / 3
+    const thumnailHeight = thumnailWidth / 132 * 74
     let notificationList = []
     for (var i = 0; i < 3; i++) {
       notificationList.push(
@@ -46,14 +71,14 @@ class MoreScreen extends BaseComponent {
           style={{ width: width, marginBottom: 10, flexDirection: 'row', marginRight: 40 }}
           onPress={() => { this.navigateToContentsDetail() }}
         >
-          <Image style={{ width: thumnailWidth, height: thumnailWidth * 3 / 4, backgroundColor: 'white', marginLeft: 20, marginRight: 16 }}
-            source={require('../../../images/mockup/mock_video_thumnail01.png')}
+          <Image style={{ width: thumnailWidth, height: thumnailHeight, backgroundColor: 'white', marginLeft: 20, marginRight: 16 }}
+            source={mockThumnail[i].url}
           />
           <View style={{ flexDirection: 'column', flex: 1, paddingRight: 16 }}>
             <Text style={[this.getStyle(scheme).title, {}]}
               numberOfLines={2}
             >
-              วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา
+              {mockTitle[i]}
             </Text>
             <Text
               style={[this.getStyle(scheme).subTitleGray, {}]}
@@ -80,7 +105,7 @@ class MoreScreen extends BaseComponent {
       <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
         <SafeAreaView style={[this.getStyle(scheme).container, { width: width }]}>
           <View style={{ paddingLeft: 16, paddingBottom: 8, paddingTop: 24 }}>
-            <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]}>Menu</Text>
+            <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]}>Welcome, Suppakit</Text>
           </View>
           <View style={{ width: width }}>
             <TouchableOpacity style={ScreenStyles.tableCell}
@@ -104,7 +129,7 @@ class MoreScreen extends BaseComponent {
                 this.props.navigation.navigate(switchScreenCase.WishListScreen);
               }}
             >
-              <FontAwesome style={{ marginLeft: 20, marginRight: 16 }}  name="bookmark-o"  color='white' size={26} />
+              <FontAwesome style={{ marginLeft: 20, marginRight: 16 }} name="bookmark-o" color='white' size={26} />
               <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>My List</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
@@ -112,7 +137,7 @@ class MoreScreen extends BaseComponent {
           <View style={{ width: width }}>
             <TouchableOpacity style={ScreenStyles.tableCell}
               onPress={() => {
-                // this.props.navigation.navigate(switchScreenCase.HelpScreen);
+                this.props.navigation.navigate(switchScreenCase.PodcastsSavedScreen);
               }}
             >
               <FontAwesome5 style={{ marginLeft: 20, marginRight: 16 }} name="headphones-alt" color='white' size={26} />
@@ -167,9 +192,9 @@ class MoreScreen extends BaseComponent {
                   ])
               }}
             >
-              <View style={{width:width,justifyContent:'center',alignItems:'center'}}>
-              <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]} allowFontScaling={false}>
-                Sign Out
+              <View style={{ width: width, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]} allowFontScaling={false}>
+                  Sign Out
               </Text>
               </View>
             </TouchableOpacity>

@@ -21,6 +21,28 @@ class ArticlesScreen extends BaseComponent {
     super(props);
     this.state = {
       scheme: Appearance.getColorScheme(),
+      mockThumnail: [
+        {
+          url: require('../../../../images/mockup/podcast_01.png'),
+          title: 'New Release'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_02.png'),
+          title: 'Trending Now'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_03.png'),
+          title: 'Special For You'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_04.png'),
+          title: 'Money'
+        },
+        {
+          url: require('../../../../images/mockup/podcast_05.png'),
+          title: 'World Trending'
+        },
+      ]
     };
   }
 
@@ -64,14 +86,14 @@ class ArticlesScreen extends BaseComponent {
     return (
       <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ width: 20, height: 20, borderRadius: 50, justifyContent: 'center', alignItems: 'center', backgroundColor: '#216FD9' ,marginLeft:5}}>
+          <View style={{ width: 20, height: 20, borderRadius: 50, justifyContent: 'center', alignItems: 'center', backgroundColor: '#216FD9', marginLeft: 5 }}>
             <Foundation name="like" color='white' size={20} />
           </View>
           <Text style={[this.getStyle(scheme).title, { marginLeft: 5 }]}>
             {likeNumber}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginRight:5 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 5 }}>
           <Text style={[this.getStyle(scheme).subTitle, {}]}>
             {shareNumber} Share
           </Text>
@@ -80,14 +102,15 @@ class ArticlesScreen extends BaseComponent {
     )
   }
 
-  renderArticleListCategory() {
-    const { scheme } = this.state
+  renderArticleListCategory(index) {
+    const { scheme, mockThumnail } = this.state
     let videoList = []
     const thumnailWidth = Platform.isPad ? width / 3 : width / 2
     const thumnailHeight = thumnailWidth / 132 * 74
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < mockThumnail.length; i++) {
       videoList.push(
         <TouchableOpacity
+          key={i}
           activeOpacity={0.8}
           style={{ flexDirection: 'column', width: thumnailWidth, marginRight: 10, marginLeft: i == 0 ? 20 : 10, backgroundColor: '#111' }}
           onPress={() => {
@@ -95,7 +118,7 @@ class ArticlesScreen extends BaseComponent {
           }}
         >
           <Image style={{ width: thumnailWidth, height: thumnailHeight, backgroundColor: 'white' }}
-            source={require('../../../../images/mockup/mock_video_thumnail01.png')}
+            source={mockThumnail[Math.floor(Math.random() * mockThumnail.length - 1) + 1].url}
           />
           <View style={{ width: '100%' }}>
             <Text style={[this.getStyle(scheme).title, { marginVertical: 5, marginHorizontal: 5 }]} numberOfLines={2}>
@@ -105,7 +128,7 @@ class ArticlesScreen extends BaseComponent {
               ใน Podcast The Secret Sauce ตอนนี้ ผมจะมาพูดคุยถึงขั้นตอนวางกลยุทธ์ในเชิงเครื่องมือ หรือ Tools ขั้นตอนเหล่านี้จะช่วยนำทางเราและสามารถนำไปใช้ได้จริงกับทั้งบริษัท และส่วนบุคคล โดยปกติแล้วเมื่อพูดถึงการทำกลยุทธ์ บริษัทต่างๆ มักจะให้เอาคนที่เกี่ยวข้องทั้งหมดมารวมกัน หา Facilitator สักคนเพื่อมาทำ SWOT ด้วยกัน แปะโพสต์อิทไอเดียมากมาย แล้วโหวตให้คะแนนกัน เพราะไม่มีใครกล้าฆ่าไอเดียของคนอื่นๆ ทิ้ง'
           </Text>
           </View>
-            {this.likeAndShareBar(2, 4)}
+          {this.likeAndShareBar(2, 4)}
         </TouchableOpacity>
       )
     }
@@ -145,12 +168,16 @@ class ArticlesScreen extends BaseComponent {
                     width: width,
                     height: width * 800 / 1200
                   }}
-                  resizeMode='contain'
-                  source={require('../../../../images/mockup/cover.jpg')}
+                  resizeMode='cover'
+                  source={require('../../../../images/mockup/podcast_05.png')}
                 />
               </SafeAreaView>
             </TouchableOpacity>
-            {this.renderArticleListCategory()}
+            {this.renderArticleListCategory(0)}
+            {this.renderArticleListCategory(1)}
+            {this.renderArticleListCategory(2)}
+            {this.renderArticleListCategory(3)}
+            {this.renderArticleListCategory(4)}
           </View>
         </ScrollView>
       </View>
