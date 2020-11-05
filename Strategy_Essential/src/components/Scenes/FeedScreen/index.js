@@ -99,23 +99,6 @@ class FeedScreen extends BaseComponent {
 
                         </TouchableOpacity>
                     </View>
-                    <View style={{}}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                const options = {
-                                    title: 'Share via',
-                                    message: "Every moment spent on planning saves three or four in execution",
-                                    url: 'some share url',
-                                    filename: 'test', // only for base64 file in Android
-                                };
-                                Share.open(options)
-                                    .then((res) => { console.log(res) })
-                                    .catch((err) => { err && console.log(err); });
-                            }}
-                        >
-                            <FontAwesome5 name="share" color='white' size={24} />
-                        </TouchableOpacity>
-                    </View>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}>
                     <View style={{}}>
@@ -148,11 +131,6 @@ class FeedScreen extends BaseComponent {
                     </View>
                     <Text style={[this.getStyle(scheme).title, { marginLeft: 5 }]}>
                         {likeNumber}
-                    </Text>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
-                    <Text style={[this.getStyle(scheme).subTitle, {}]}>
-                        {shareNumber} Share
                     </Text>
                 </View>
             </View>

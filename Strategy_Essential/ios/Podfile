@@ -5,15 +5,9 @@ platform :ios, '10.0'
 
 target 'Strategy_Essential' do
   config = use_native_modules!
-
   use_react_native!(:path => config["reactNativePath"])
 
   pod 'react-native-video', :path => '../node_modules/react-native-video'
-
-  target 'Strategy_EssentialTests' do
-    inherit! :complete
-    # Pods for testing
-  end
 
   # Enables Flipper.
   #
@@ -25,11 +19,3 @@ target 'Strategy_Essential' do
   end
 end
 
-target 'Strategy_Essential-tvOS' do
-  # Pods for Strategy_Essential-tvOS
-
-  target 'Strategy_Essential-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end

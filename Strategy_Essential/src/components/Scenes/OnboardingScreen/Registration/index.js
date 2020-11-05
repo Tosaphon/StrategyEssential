@@ -66,14 +66,14 @@ class Regsitration extends BaseComponent {
 
   render() {
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         {this.renderHeader("Register")}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
-            <View style={[Styles.textInputView, { marginTop: 40 }]}>
+            <View style={[this.getStyle().textInputView, { marginTop: 40 }]}>
               <TextInput
                 placeholder="Full Name"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -90,10 +90,10 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <View style={[Styles.textInputView]}>
+            <View style={[this.getStyle().textInputView]}>
               <TextInput
                 placeholder="Email"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -110,11 +110,11 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <View style={[Styles.textInputView]}>
+            <View style={[this.getStyle().textInputView]}>
               <TextInput
                 secureTextEntry={true}
                 placeholder="Password"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='default'
@@ -131,10 +131,10 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <View style={[Styles.textInputView]}>
+            <View style={[this.getStyle().textInputView]}>
               <TextInput
                 placeholder="Confirm Password"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
@@ -152,15 +152,15 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <Text style={[Styles.title, Styles.textInput, { width: boxWidth, marginVertical: 10 }]}>
+            <Text style={[this.getStyle().title, Styles.textInput, { width: boxWidth, marginVertical: 10 }]}>
               Use 8 or more characters with a mix of letters,
               numbers
                   </Text>
 
-            <View style={[Styles.textInputView]}>
+            <View style={[this.getStyle().textInputView]}>
               <TextInput
                 placeholder="Mobile Number"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={10}
                 keyboardType='phone-pad'
@@ -177,14 +177,14 @@ class Regsitration extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <Text style={[Styles.title, { width: boxWidth, marginVertical: 10 }]}>
+            <Text style={[this.getStyle().title, { width: boxWidth, marginVertical: 10 }]}>
               The application will sent OTP code for authentication
               Your mobile phone number by SMS
                   </Text>
-            {/* <View style={[Styles.textInputView]}>
+            {/* <View style={[this.getStyle().textInputView]}>
               <TextInput
                 placeholder="Coupon Code (Optional)"
-                style={[Styles.title, { height: 32, }]}
+                style={[this.getStyle().title, { height: 32, }]}
                 placeholderTextColor="gray"
                 maxLength={10}
                 keyboardType='default'
@@ -211,8 +211,8 @@ class Regsitration extends BaseComponent {
               this.navigateToOTPConfirmation()
             }}
           >
-            <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#dfb445', borderRadius: 10 }]}>
-              <Text style={[Styles.title]}>
+            <View style={[this.getStyle().textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#dfb445', borderRadius: 10 }]}>
+              <Text style={[this.getStyle().title]}>
                 NEXT
             </Text>
             </View>

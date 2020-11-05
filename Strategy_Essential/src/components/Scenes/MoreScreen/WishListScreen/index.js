@@ -169,7 +169,7 @@ class WishListScreen extends BaseComponent {
             />
 
             <View style={{ flexDirection: 'column', flex: 1, paddingRight: 16 }}>
-              <Text style={[Styles.title, {}]}
+              <Text style={[this.getStyle().title, {}]}
                 numberOfLines={2}
               >
                 {section[i].title}
@@ -209,7 +209,7 @@ class WishListScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Videos }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Videos ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: selectedSection == headerSection.Videos ? 'white' : 'gray' }]}>
             Videos ({valueVideos})
             </Text>
         </TouchableOpacity>
@@ -218,7 +218,7 @@ class WishListScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Podcasts }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Podcasts ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: selectedSection == headerSection.Podcasts ? 'white' : 'gray' }]}>
             Podcasts ({valuePodcasts})
             </Text>
         </TouchableOpacity>
@@ -227,7 +227,7 @@ class WishListScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Articles }) }}
         >
-          <Text style={[Styles.title, { color: selectedSection == headerSection.Articles ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: selectedSection == headerSection.Articles ? 'white' : 'gray' }]}>
             Articles ({valueArticles})
             </Text>
         </TouchableOpacity>
@@ -247,7 +247,7 @@ class WishListScreen extends BaseComponent {
 
   render() {
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         {this.renderHeader("My List", this.editToggle, this.state.enableEdit)}
         {this.renderFooter()}
         {this.renderSectionHeader()}

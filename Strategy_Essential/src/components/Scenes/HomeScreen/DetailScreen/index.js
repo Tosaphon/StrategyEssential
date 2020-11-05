@@ -10,7 +10,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Share from "react-native-share";
 import Video from 'react-native-video';
 import Styles from '../../../BaseView/Styles';
 import BaseComponent from '../../../Utility/BaseComponent';
@@ -133,8 +132,8 @@ class DetailScreen extends BaseComponent {
       <TouchableOpacity
         activeOpacity={1}
         // style={{ width: width, videoHeight: videoHeight }}
-        onPress={() => {
-          const now = Date.now()
+        onPress={async () => {
+          const now = await Date.now()
           console.log('tab : ', now)
           if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
             {
@@ -145,7 +144,7 @@ class DetailScreen extends BaseComponent {
             }
 
           } else {
-            this.setState({ lastTap: now, isMuted: !isMuted })
+            await this.setState({ lastTap: now, isMuted: !isMuted })
           }
         }}
       >
@@ -203,11 +202,11 @@ class DetailScreen extends BaseComponent {
   render() {
     const { isTeserPause, lastTap, isRate, isVideoThumnail, isPodcast, isBookmark, isVideoPlayed } = this.state
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         <Video
           pictureInPicture={true}
           fullscreen={true}
-          playInBackground={true}
+          playInBackground={false}
           paused={!isVideoPlayed}
           onFullscreenPlayerWillPresent={() => {
             this.setState({ isVideoPlayed: !isVideoPlayed })
@@ -218,6 +217,7 @@ class DetailScreen extends BaseComponent {
           }}
           onError={(error) => { console.log('video error : ', error) }}
         />
+        
         <SafeAreaView>
           {isVideoThumnail ?
             this.renderVideoThumbnail()
@@ -246,16 +246,16 @@ class DetailScreen extends BaseComponent {
               <Entypo style={{ marginRight: 5 }} name="controller-play" color='white' size={26} />
             }
 
-            <Text style={[Styles.title, { marginVertical: 10 }]}>
+            <Text style={[this.getStyle().title, { marginVertical: 10 }]}>
               PLAY
           </Text>
           </View>
         </TouchableOpacity>
         <ScrollView style={{ width: width }}>
-          <Text style={[Styles.title, { marginHorizontal: 20, marginVertical: 10 }]}>
+          <Text style={[this.getStyle().title, { marginHorizontal: 20, marginVertical: 10 }]}>
             {this.state.title}
           </Text>
-          <Text style={[Styles.title, { marginHorizontal: 20, marginVertical: 10 }]}>
+          <Text style={[this.getStyle().title, { marginHorizontal: 20, marginVertical: 10 }]}>
             {this.state.subTitle}
           </Text>
 
@@ -268,11 +268,11 @@ class DetailScreen extends BaseComponent {
               }}
             >
               {isBookmark ?
-                <FontAwesome name="bookmark" color='white' size={24} />
+                <FontAwesome name="bookmark" color={this.getIconColor()} size={24} />
                 :
-                <FontAwesome name="bookmark-o" color='white' size={24} />
+                <FontAwesome name="bookmark-o" color={this.getIconColor()} size={24} />
               }
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -281,26 +281,8 @@ class DetailScreen extends BaseComponent {
                 this.setState({ isRate: !isRate, isShowRating: true })
               }}
             >
-              <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
-              onPress={() => {
-                const options = {
-                  title: 'Share via',
-                  message: this.state.title,
-                  url: 'some share url',
-                  filename: 'test', // only for base64 file in Android
-                };
-                Share.open(options)
-                  .then((res) => { console.log(res) })
-                  .catch((err) => { err && console.log(err); });
-              }}
-            >
-              <FontAwesome5 name="share" color='white' size={30} />
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
+              <AntDesign name={isRate ? "like1" : "like2"} color={this.getIconColor()} size={30} />
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -309,13 +291,13 @@ class DetailScreen extends BaseComponent {
                 this.downloadContent()
               }}
             >
-              <MaterialCommunityIcons name="download" color='white' size={30} />
-              <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
+              <MaterialCommunityIcons name="download" color={this.getIconColor()} size={30} />
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
             </TouchableOpacity>
           </View>
 
           <View style={{ width: width, flexDirection: 'column', marginTop: 20 }}>
-            <Text style={[Styles.title, { marginLeft: 20 }]}>Relate Contents</Text>
+            <Text style={[this.getStyle().title, { marginLeft: 20 }]}>Relate Contents</Text>
             {this.renderRelateContents()}
           </View>
 

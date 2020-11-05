@@ -44,7 +44,7 @@ class ArticleDetail extends BaseComponent {
                         :
                         <FontAwesome name="bookmark-o" color='white' size={24} />
                     }
-                    <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
+                    <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.9}
@@ -54,7 +54,7 @@ class ArticleDetail extends BaseComponent {
                     }}
                 >
                     <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
-                    <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
+                    <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.9}
@@ -72,7 +72,7 @@ class ArticleDetail extends BaseComponent {
                     }}
                 >
                     <FontAwesome5 name="share" color='white' size={30} />
-                    <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
+                    <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -91,10 +91,10 @@ class ArticleDetail extends BaseComponent {
                             />
                         </View>
                     </SafeAreaView>
-                    <Text style={[Styles.title, { marginHorizontal: 20, marginTop: 20, fontSize: 18 }]}>
+                    <Text style={[this.getStyle().title, { marginHorizontal: 20, marginTop: 20, fontSize: 18 }]}>
                         {this.state.title}
                     </Text>
-                    <Text style={[Styles.subTitle, { marginHorizontal: 20, marginVertical: 10 }]}>
+                    <Text style={[this.getStyle().subTitle, { marginHorizontal: 20, marginVertical: 10 }]}>
                         {this.state.subTitle}
                     </Text>
                 </ScrollView>

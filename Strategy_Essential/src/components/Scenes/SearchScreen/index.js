@@ -144,13 +144,13 @@ class SearchScreen extends BaseComponent {
               source={section[i].image}
             />
             <View style={{ flexDirection: 'column', flex: 1, paddingRight: 16 }}>
-              <Text style={[this.getStyle(scheme).title, {}]}
+              <Text style={[this.getStyle().title, {}]}
                 numberOfLines={2}
               >
                 วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา
               </Text>
               <Text
-                style={[this.getStyle(scheme).subTitleGray, {}]}
+                style={[this.getStyle().subTitleGray, {}]}
                 numberOfLines={1}
               >
                 The Secret Sauce EP.199
@@ -184,7 +184,7 @@ class SearchScreen extends BaseComponent {
         }}>
           <Feather name="search" color='gray' size={26} style={{ marginLeft: 16, marginVertical: 4 }} />
           <TextInput
-            style={[Styles.textInput, { marginLeft: 8, flex: 1, color: 'white' }]}
+            style={[this.getStyle().textInput, { marginLeft: 8, flex: 1, color: 'white' }]}
             placeholder='Search'
             placeholderTextColor='gray'
             onFocus={() => { this.setState({ searchBegin: true }) }}
@@ -208,7 +208,7 @@ class SearchScreen extends BaseComponent {
                 Keyboard.dismiss(0)
               }}
             >
-              <Text style={{ color: 'white' }}>
+              <Text style={this.getStyle().title}>
                 Cancle
           </Text>
             </TouchableOpacity>
@@ -219,7 +219,7 @@ class SearchScreen extends BaseComponent {
   }
 
   renderSectionHeader() {
-    const { valueVideos, valuePodcasts, valueArticles, selectedSection, scheme } = this.state
+    const { valueVideos, valuePodcasts, valueArticles, selectedSection } = this.state
     return (
       <View style={{ width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
         <TouchableOpacity
@@ -227,7 +227,7 @@ class SearchScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Videos }) }}
         >
-          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Videos ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Videos) }]}>
             Videos ({valueVideos})
             </Text>
         </TouchableOpacity>
@@ -236,7 +236,7 @@ class SearchScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Podcasts }) }}
         >
-          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Podcasts ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Podcasts) }]}>
             Podcasts ({valuePodcasts})
             </Text>
         </TouchableOpacity>
@@ -245,7 +245,7 @@ class SearchScreen extends BaseComponent {
           activeOpacity={0.8}
           onPress={() => { this.setState({ selectedSection: headerSection.Articles }) }}
         >
-          <Text style={[this.getStyle(scheme).title, { color: selectedSection == headerSection.Articles ? 'white' : 'gray' }]}>
+          <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Articles) }]}>
             Articles ({valueArticles})
             </Text>
         </TouchableOpacity>
@@ -254,14 +254,13 @@ class SearchScreen extends BaseComponent {
   }
 
   renderNoresultScreen() {
-    const { scheme } = this.state
     const cycleSize = width / 3
     return (
-      <View style={[this.getStyle(scheme).container, { alignItems: 'center' }]}>
+      <View style={[this.getStyle().container, { alignItems: 'center' }]}>
         <View style={{ width: cycleSize, height: cycleSize, marginTop: 40, justifyContent: 'center', alignItems: 'center' }}>
-          <Feather name="search" color='white' size={width / 5} />
+          <Feather name="search" color={this.getIconColor(false)} size={width / 5} />
         </View>
-        <Text style={[this.getStyle(scheme).title, { marginVertical: -10, marginHorizontal: 32, textAlign: 'center' }]}>
+        <Text style={[this.getStyle().title, { marginVertical: -10, marginHorizontal: 32, textAlign: 'center' }]}>
           No Result Fond
             </Text>
       </View>
@@ -269,10 +268,10 @@ class SearchScreen extends BaseComponent {
   }
 
   render() {
-    const { scheme, result } = this.state
+    const { result } = this.state
     if (result) {
       return (
-        <View style={this.getStyle(scheme).container}>
+        <View style={this.getStyle().container}>
           {this.renderFooter()}
           {this.renderSearchView()}
           {this.renderSectionHeader()}
@@ -292,7 +291,7 @@ class SearchScreen extends BaseComponent {
       );
     } else {
       return (
-        <View style={this.getStyle(scheme).container}>
+        <View style={this.getStyle().container}>
           {this.renderFooter()}
           {this.renderSearchView()}
           <ScrollView

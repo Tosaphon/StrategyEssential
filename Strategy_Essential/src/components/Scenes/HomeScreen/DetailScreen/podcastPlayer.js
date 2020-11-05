@@ -39,7 +39,7 @@ class PodcastPlayer extends BaseComponent {
             scheme: Appearance.getColorScheme()
         };
         DeviceEventEmitter.emit('audioBarActive', {
-            isActive: false,
+            isActive: false
         });
 
     }
@@ -186,7 +186,7 @@ class PodcastPlayer extends BaseComponent {
                             borderColor: 'gray'
                         }}>
                             <TextInput
-                                style={[Styles.textInput, { marginLeft: 8, flex: 1, color: 'black' }]}
+                                style={[this.getStyle().textInput, { marginLeft: 8, flex: 1, color: 'black' }]}
                                 placeholder='Title'
                                 placeholderTextColor='gray'
                                 onFocus={() => { }}
@@ -207,7 +207,7 @@ class PodcastPlayer extends BaseComponent {
                                     this.setState({ displaySavePodcast: false, paused: false })
                                 }}
                             >
-                                <Text style={[Styles.title, { color: 'gray', paddingVertical: 10 }]}>
+                                <Text style={[this.getStyle().title, { color: 'gray', paddingVertical: 10 }]}>
                                     Cancel
                                     </Text>
                             </TouchableOpacity>
@@ -218,7 +218,7 @@ class PodcastPlayer extends BaseComponent {
                                     this.confirmSavePodcast()
                                 }}
                             >
-                                <Text style={[Styles.title, { color: 'black', paddingVertical: 10 }]}>
+                                <Text style={[this.getStyle().title, { color: 'black', paddingVertical: 10 }]}>
                                     Save
                                     </Text>
                             </TouchableOpacity>
@@ -236,7 +236,7 @@ class PodcastPlayer extends BaseComponent {
                         this.player = ref
                     }}
                 />
-                <SafeAreaView style={[Styles.container, { alignItems: 'center' }]}>
+                <SafeAreaView style={[this.getStyle().container, { alignItems: 'center' }]}>
                     <View style={{ width: width / 2, height: width / 2, backgroundColor: 'white', marginTop: 100 }}>
                     </View>
                     <Slider
@@ -249,15 +249,15 @@ class PodcastPlayer extends BaseComponent {
                         maximumTrackTintColor="#e8cb80"
                     />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width - 40 }}>
-                        <Text style={[Styles.title, { textAlign: 'left', marginLeft: 10 }]}>
+                        <Text style={[this.getStyle().title, { textAlign: 'left', marginLeft: 10 }]}>
                             {this.parseTime(currentTime)}
                         </Text>
-                        <Text style={[Styles.title, { textAlign: 'right' }]}>
+                        <Text style={[this.getStyle().title, { textAlign: 'right' }]}>
                             {this.parseTime(maximumTime)}
                         </Text>
                     </View>
 
-                    <Text style={[Styles.title, { marginHorizontal: 30, marginVertical: 20 }]}>
+                    <Text style={[this.getStyle().title, { marginHorizontal: 30, marginVertical: 20 }]}>
                         วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา ‘ลองดูสิ’ | The Secret Sauce EP.199
                     </Text>
 
@@ -276,7 +276,7 @@ class PodcastPlayer extends BaseComponent {
                                     <FontAwesome name="bookmark-o" color='white' size={24} />
                                 }
                             </View>
-                            <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
+                            <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             activeOpacity={0.9}
@@ -288,17 +288,7 @@ class PodcastPlayer extends BaseComponent {
                             <View style={{ width: 30, height: 30, justifyContent: 'center', alignItems: 'center' }}>
                                 <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
                             </View>
-                            <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Rate</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            activeOpacity={0.9}
-                            style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
-                            onPress={() => { }}
-                        >
-                            <View style={{ width: 30, height: 30, justifyContent: 'center', alignItems: 'center' }}>
-                                <FontAwesome5 name="share" color='white' size={26} />
-                            </View>
-                            <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
+                            <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Rate</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             activeOpacity={0.9}
@@ -308,7 +298,7 @@ class PodcastPlayer extends BaseComponent {
                             <View style={{ width: 30, height: 30, justifyContent: 'center', alignItems: 'center' }}>
                                 <MaterialCommunityIcons name="download" color='white' size={30} />
                             </View>
-                            <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
+                            <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
                         </TouchableOpacity>
                         <View style={{ height: 40, backgroundColor: 'gray', width: 1, opacity: 0.5, marginLeft: 20, marginRight: 10 }} />
                         <TouchableOpacity
@@ -319,7 +309,7 @@ class PodcastPlayer extends BaseComponent {
                             <View style={{ width: 60, height: 30, justifyContent: 'center', alignItems: 'center' }}>
                                 <Text style={[{ fontSize: 24, color: 'white', fontWeight: 'bold' }]}>{ENUM_SPEED[speedIndex]}X</Text>
                             </View>
-                            <Text style={[Styles.title, { fontSize: 10, marginTop: 5 }]}>Speed</Text>
+                            <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Speed</Text>
                         </TouchableOpacity>
                     </View>
 

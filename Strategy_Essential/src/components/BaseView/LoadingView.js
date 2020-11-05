@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
+import BaseComponent from "../Utility/BaseComponent";
+import Modal from 'react-native-modal';
+
+const { width, height } = Dimensions.get('screen')
 
 class LoadingView extends Component {
   constructor(props) {
@@ -7,27 +11,43 @@ class LoadingView extends Component {
     this.state = {};
   }
 
+  renderModal() {
+    return (
+      <Modal
+        isVisible={this.props.isVisible}
+        hasBackdrop={true}
+        style={{ margin: 0, width: width, height: height }}
+      >
+        {this.renderLoadingView()}
+      </Modal>
+    )
+  }
+
+  renderLoadingView() {
+    return (
+      <View style={styles.ActivityIndicatorView}>
+        <View
+          style={[
+            styles.ActivityIndicatorView,
+            { backgroundColor: this.props.scheme == 'light' ? 'black' : 'white', opacity: 0.2 }
+          ]}
+        />
+        <ActivityIndicator
+          //visible={this.props.visible}
+          color={this.props.scheme == 'light' ? 'black' : 'white'}
+          size="large"
+          style={styles.ActivityIndicatorStyle}
+        />
+        <View style={styles.ActivityIndicatorBg}></View>
+      </View>
+    )
+  }
+
   render() {
-    if (this.props.visible) {
-      return (
-        <View style={styles.ActivityIndicatorView}>
-          <View
-            style={[
-              styles.ActivityIndicatorView,
-              { backgroundColor: "black", opacity: 0.2 }
-            ]}
-          />
-          <ActivityIndicator
-            //visible={this.props.visible}
-            color="black"
-            size="large"
-            style={styles.ActivityIndicatorStyle}
-          />
-          <View style={styles.ActivityIndicatorBg}></View>
-        </View>
-      );
+    if (this.props.isVisible) {
+      return this.renderLoadingView()
     } else {
-      return null;
+      return null
     }
   }
 }
@@ -41,7 +61,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "flex-start",
     justifyContent: "center",
-    zIndex:9999
+    zIndex: 9999
   },
   ActivityIndicatorBg: {
     position: "absolute",

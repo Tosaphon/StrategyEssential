@@ -20,15 +20,15 @@ const TopTab = createMaterialTopTabNavigator()
 
 function SigninStackScreen() {
     return (
-      <NavigationStack.Navigator
-        screenOptions={{
-          headerShown: false
-        }}
-      >
-        <NavigationStack.Screen name="SigninScreen" component={SigninScreen} />
-      </NavigationStack.Navigator>
+        <NavigationStack.Navigator
+            screenOptions={{
+                headerShown: false
+            }}
+        >
+            <NavigationStack.Screen name="SigninScreen" component={SigninScreen} />
+        </NavigationStack.Navigator>
     );
-  }
+}
 
 
 function OnboardingSlide() {
@@ -59,8 +59,24 @@ function OnboardingSlide() {
 
 
 function OnboardingNavigationStack() {
+    const routeNameRef = React.useRef();
+    const navigationRef = React.useRef();
     return (
-        <NavigationContainer>
+        <NavigationContainer
+            ref={navigationRef}
+            onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
+            onStateChange={async () => {
+                const previousRouteName = routeNameRef.current;
+                const currentRouteName = getActiveRouteName(state);
+
+                if (previousRouteName !== currentRouteName) {
+                    await analytics().logScreenView({
+                        screen_name: currentRouteName,
+                        screen_class: currentRouteName,
+                    });
+                }
+            }}
+        >
             <NavigationStack.Navigator
                 screenOptions={{
                     headerShown: false

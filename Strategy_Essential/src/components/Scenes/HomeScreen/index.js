@@ -6,11 +6,12 @@ import BaseComponent from '../../Utility/BaseComponent'
 import Styles from '../../BaseView/Styles';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import Foundation from 'react-native-vector-icons/Foundation';
 import Modal from 'react-native-modal';
-import axios from 'axios'
+import axios from 'axios';
 import { Appearance, useColorScheme } from 'react-native-appearance';
+import LoadingView from '../../BaseView/LoadingView';
+
 
 const { width, height } = Dimensions.get('window')
 const switchScreenCase = {
@@ -25,7 +26,8 @@ class HomeScreen extends BaseComponent {
       access_token: '',
       scheme: Appearance.getColorScheme(),
       toptabHeight: 0,
-      showPopup: true,
+      showPopup: false,
+      isLoading: true,
       mockThumnail: [
         {
           url: require('../../../images/mockup/podcast_01.png'),
@@ -62,7 +64,10 @@ class HomeScreen extends BaseComponent {
       this.setState({ scheme: colorScheme })
       console.log("colorScheme : ", colorScheme)
     })
+    // this.login()
+    this.postLogin()
   }
+
   dismissPopup() {
 
   }
@@ -76,28 +81,48 @@ class HomeScreen extends BaseComponent {
     }
   }
 
+  postLogin() {
+    console.log('postLogin')
+    let param = {
+      username: 'tosaphon.r@dvdesigngroup.co.th',
+      password: 'a12345678'
+    }
+    axios.post('http://coachflix.mmzilla.com/api/v1/login', param)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }
+
   async login() {
+    console.log('login');
+    axios.defaults.timeout = 180000;
     var self = this
     var bodyFormData = new FormData();
-    bodyFormData.append('username', 'admin');
-    bodyFormData.append('password', '123456');
+    bodyFormData.append('username', 'test');
+    bodyFormData.append('password', '123456789');
     await axios({
       method: 'post',
       url: 'http://coachflix.mmzilla.com/api/v1/login',
       data: bodyFormData,
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      }
     })
       .then(async function (response) {
         //handle success
-        // console.log(response);
+        console.log(response);
         const token = response.data.data.token
         console.log('token : ', token)
         await self.setState({ access_token: token })
         self.getProfile()
       })
-      .catch(function (response) {
+      .catch(function (error) {
         //handle error
-        console.log(response);
+        console.log(error);
       });
   }
 
@@ -163,8 +188,9 @@ class HomeScreen extends BaseComponent {
         <TouchableOpacity
           key={i}
           activeOpacity={0.8}
-          style={{ flexDirection: 'column', width: thumnailWidth, marginRight: 10, marginLeft: i == 0 ? 20 : 10, backgroundColor: '#111' }}
+          style={[this.getStyle().backgroundBW, { flexDirection: 'column', width: thumnailWidth, marginRight: 10, marginLeft: i == 0 ? 20 : 10 }]}
           onPress={() => {
+            this.analyticsTracker("ContentClick", { id: '123', type: 'video' })
             this.switchToScreen(switchScreenCase.DetailScreen)
           }}
         >
@@ -172,10 +198,10 @@ class HomeScreen extends BaseComponent {
             source={mockThumnail[Math.floor(Math.random() * mockThumnail.length - 1) + 1].url}
           />
           <View style={{ width: '100%' }}>
-            <Text style={[this.getStyle(scheme).title, { marginVertical: 5, marginHorizontal: 5 }]} numberOfLines={2}>
+            <Text style={[this.getStyle().title, { marginVertical: 5, marginHorizontal: 5 }]} numberOfLines={2}>
               วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา
           </Text>
-            <Text style={[this.getStyle(scheme).subTitleGray, { marginHorizontal: 5 }]} numberOfLines={2}>
+            <Text style={[this.getStyle().subTitleGray, { marginHorizontal: 5 }]} numberOfLines={2}>
               ใน Podcast The Secret Sauce ตอนนี้ ผมจะมาพูดคุยถึงขั้นตอนวางกลยุทธ์ในเชิงเครื่องมือ หรือ Tools ขั้นตอนเหล่านี้จะช่วยนำทางเราและสามารถนำไปใช้ได้จริงกับทั้งบริษัท และส่วนบุคคล โดยปกติแล้วเมื่อพูดถึงการทำกลยุทธ์ บริษัทต่างๆ มักจะให้เอาคนที่เกี่ยวข้องทั้งหมดมารวมกัน หา Facilitator สักคนเพื่อมาทำ SWOT ด้วยกัน แปะโพสต์อิทไอเดียมากมาย แล้วโหวตให้คะแนนกัน เพราะไม่มีใครกล้าฆ่าไอเดียของคนอื่นๆ ทิ้ง'
           </Text>
           </View>
@@ -286,11 +312,13 @@ class HomeScreen extends BaseComponent {
           <View style={{ height: 40 }} />
         </ScrollView>
         {/* {this.renderHeaderBG(this.state.toptabHeight, this.state.scheme)} */}
+        <LoadingView visible={this.state.isLoading} />
         <View
           ///for detect tabbar bottom height
           style={{ position: 'absolute', width: width, bottom: 0 }}
           onLayout={event => {
             const bottom = height - event.nativeEvent.layout.y
+            console.log('tabbar bottom : ', bottom)
             this.setTabbarBottomHeight(bottom)
           }}
         />

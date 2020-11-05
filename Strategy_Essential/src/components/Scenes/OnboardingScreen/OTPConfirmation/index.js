@@ -39,18 +39,18 @@ class OTPConfirmation extends BaseComponent {
 
     render() {
         return (
-            <View style={Styles.container}>
+            <View style={this.getStyle().container}>
                 {this.renderHeader("OTP Confirmation")}
                 <ScrollView style={{ flex: 1, width: '100%' }}>
                     <View style={ScreenStyles.container}>
-                        <Text style={[Styles.title, { marginTop: 40 }]}>Ref Code is</Text>
-                        <Text style={[Styles.title]}>AOPC</Text>
+                        <Text style={[this.getStyle().title, { marginTop: 40 }]}>Ref Code is</Text>
+                        <Text style={[this.getStyle().title]}>AOPC</Text>
                         <View style={{ width: boxWidth, flexDirection: 'row', justifyContent: 'center' }}>
                             <View style={[ScreenStyles.OTPBoxView, { marginTop: 40, marginHorizontal: 10 }]}>
                                 <TextInput
                                     ref={(input) => { this.TextInput1 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
+                                    style={[this.getStyle().title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -73,7 +73,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput2 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
+                                    style={[this.getStyle().title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -96,7 +96,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput3 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
+                                    style={[this.getStyle().title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -119,7 +119,7 @@ class OTPConfirmation extends BaseComponent {
                                 <TextInput
                                     ref={(input) => { this.textInput4 = input; }}
                                     placeholder="-"
-                                    style={[Styles.title, Styles.textInput, { height: 32, }]}
+                                    style={[this.getStyle().title, Styles.textInput, { height: 32, }]}
                                     placeholderTextColor="gray"
                                     maxLength={1}
                                     keyboardType='number-pad'
@@ -139,7 +139,7 @@ class OTPConfirmation extends BaseComponent {
                             </View>
                         </View>
                         <Text
-                            style={[Styles.title, { textAlign: 'center', marginHorizontal: 60, marginTop: 40 }]}>
+                            style={[this.getStyle().title, { textAlign: 'center', marginHorizontal: 60, marginTop: 40 }]}>
                             OTP just sent to your mobile phone. Please check your
                             Message box.
                         </Text>
@@ -152,8 +152,8 @@ class OTPConfirmation extends BaseComponent {
                             this.submit()
                         }}
                     >
-                        <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#dfb445', borderRadius: 10 }]}>
-                            <Text style={[Styles.title]}>
+                        <View style={[this.getStyle().textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#dfb445', borderRadius: 10 }]}>
+                            <Text style={[this.getStyle().title]}>
                                 NEXT
                             </Text>
                         </View>

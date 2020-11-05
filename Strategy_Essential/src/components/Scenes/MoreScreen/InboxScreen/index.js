@@ -145,8 +145,8 @@ class InboxScreen extends BaseComponent {
 
   render() {
     return (
-      <View style={Styles.container}>
-        {this.renderHeader("Inbox")}
+      <View style={this.getStyle().container}>
+        {this.renderTitleHeader("Inbox")}
         {this.renderFooter()}
         <ScrollView
           style={{ flex: 1, width: width }}

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 import {
   GoogleSignin,
@@ -19,28 +20,14 @@ class Signin extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: false,
+      email: 'tosaphon.r@dvdesigngroup.co.th',
+      password: 'a12345678',
+      isPasswordValid: true,
+      isShowPassword: false,
       isLoading: false
     };
   }
-
-  // renderHeader() {
-  //   return (
-  //     <View style={{
-  //       // flex: 1,
-  //       width: width,
-  //       justifyContent: 'center',
-  //       backgroundColor: 'blue',
-  //     }}>
-  //       <SafeAreaView style={{
-  //         alignItems: 'center',
-  //         flexDirection: 'row',
-  //       }}>
-  //         <Ionicons style={{}} name="chevron-back" color='white' size={26} />
-  //         <Text style={[Styles.title, {}]}>TITLE</Text>
-  //       </SafeAreaView>
-  //     </View>
-  //   )
-  // }
 
   componentDidMount() {
     this.reRender = this.props.navigation.addListener('focus', () => {
@@ -50,56 +37,113 @@ class Signin extends BaseComponent {
     });
   }
 
-  signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      this.setState({ userInfo });
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
+  emailPasswordSignIn = async () => {
+    this.setState({ isLoading: true })
+    let self = this
+    const { email, password } = this.state
+    let param = {
+      username: email,
+      password: password,
     }
+    console.log('param : ', param)
+    await axios.post('http://coachflix.mmzilla.com/api/v1/login', param)
+      .then(async (response) => {
+        console.log(response)
+        await self.loadProfile(response.data.data.token)
+      })
+      .catch(function (error) {
+        self.showAlert(error)
+      })
+  }
+
+  loadProfile = async (userToken) => {
+    const authStr = 'Bearer ' + userToken
+    let self = this
+    await axios.get('http://coachflix.mmzilla.com/api/v1/profile', {
+      headers: { 'Authorization': authStr }
+    })
+      .then(async function (response) {
+        let profile = await JSON.stringify(response.data.data)
+        await AsyncStorage.setItem('userProfile', profile)
+        await self.navigateToNextScreen(userToken)
+        self.setState({ isLoading: false })
+      })
+      .catch(function (error) {
+        self.showAlert(error)
+      });
+  }
+
+  showAlert = (error) => {
+    let userError = error.response.data
+    let subTitleError = userError.name + " (" + userError.statusCode + ")"
+    console.log(userError);
+    Alert.alert(userError.message, subTitleError,
+      [
+        {
+          text: global.l10n.errorLoginOkButtonTitle,
+          onPress: () => { this.setState({ isLoading: false }) },
+          style: 'cancel'
+        }
+      ]
+    )
+  }
+
+  navigateToNextScreen = async (userToken) => {
+    let isConsentStr = await AsyncStorage.getItem('isConsent')
+    let isConsent = await JSON.parse(isConsentStr)
+    if (isConsent) {
+      await AsyncStorage.setItem("isConsent", "true")
+      await AsyncStorage.setItem("isMember", "true")
+      DeviceEventEmitter.emit('updateRootView');
+      console.log("emit updateRootView")
+    } else {
+      await AsyncStorage.setItem('token', userToken)
+      this.props.navigation.navigate('ConsentsScreen')
+    }
+  }
+
+  signIn = async () => {
+    // try {
+    //   await GoogleSignin.hasPlayServices();
+    //   const userInfo = await GoogleSignin.signIn();
+    //   this.setState({ userInfo });
+    // } catch (error) {
+    //   if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    //     // user cancelled the login flow
+    //   } else if (error.code === statusCodes.IN_PROGRESS) {
+    //     // operation (e.g. sign in) is in progress already
+    //   } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+    //     // play services not available or outdated
+    //   } else {
+    //     // some other error happened
+    //   }
+    // }
   };
 
-  validateEmail() {
-    console.log("valid")
-  }
-  
   validatePassword() {
-    console.log("valid")
-  }
-
-  async signin() {
-    await AsyncStorage.setItem('token', 'test')
-    this.props.navigation.navigate('ConsentsScreen')
+    const { password } = this.state
+    let isPasswordValid = password.length >= 8
+    this.setState({ isPasswordValid: isPasswordValid })
   }
 
   render() {
+    const { isPasswordValid, password, email, isShowPassword } = this.state
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         {this.renderHeader("")}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
-            <View style={[Styles.textInputView, { marginTop: 40 }]}>
+            <View style={[this.getStyle().textInputView, { marginTop: 40 }]}>
               <TextInput
-                placeholder="Email or phone number"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
+                placeholder={global.l10n.emailTextFieldPlaceholderTitle}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
                 keyboardType='email-address'
-                onBlur={() => {
-                  this.validateEmail()
-                }}
                 onChangeText={async text => {
-                  await this.setState({ usename: text });
+                  await this.setState({ email: text });
                 }}
+                value={email}
                 autoFocus={false}
                 autoCorrect={false}
                 autoCapitalize="none"
@@ -107,15 +151,15 @@ class Signin extends BaseComponent {
                 blurOnSubmit={false}
               />
             </View>
-            <View style={[Styles.textInputView, Styles.textInput]}>
+            <View style={[this.getStyle().textInputView, Styles.textInput]}>
               <TextInput
-                placeholder="Password"
-                style={[Styles.title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
-                secureTextEntry={true}
+                placeholder={global.l10n.passwrodTextFieldPlaceholderTitle}
+                style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 68 }]}
+                secureTextEntry={!isShowPassword}
                 allowFontScaling={false}
-                value={this.state.passwrod}
+                value={password}
                 placeholderTextColor="gray"
-                maxLength={40}
+                maxLength={100}
                 keyboardType="default"
                 onBlur={() => {
                   this.validatePassword()
@@ -129,10 +173,30 @@ class Signin extends BaseComponent {
                 returnKeyType={'next'}
                 blurOnSubmit={true}
               />
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => { this.setState({ isShowPassword: !isShowPassword }) }}
+              >
+                {isShowPassword ?
+                  <Ionicons name="eye-off" color='white' size={26} />
+                  :
+                  <Ionicons name="eye" color='white' size={26} />
+                }
+              </TouchableOpacity>
+
             </View>
+            {isPasswordValid ? null :
+              <Text style={[this.getStyle().subTitle, { width: boxWidth, color: 'red' }]}>
+                {global.l10n.inlineErrorPasswordLess}
+              </Text>
+            }
             <TouchableOpacity
               onPress={() => {
-                this.signin()
+                if (isPasswordValid && password.length > 0) {
+                  this.emailPasswordSignIn()
+                } else {
+                  Alert.alert(global.l10n.errorLoginPasswordLessTitle, global.l10n.errorLoginPasswrodLessSubtitle)
+                }
               }}
             >
               <View style={[
@@ -141,49 +205,33 @@ class Signin extends BaseComponent {
                   backgroundColor: '#dfb445',
                   justifyContent: 'center'
                 }]}>
-                <Text style={[Styles.title]}>Sign in</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("RegistrationScreen")
-
-              }}
-            >
-              <View style={[
-                Styles.textInputView,
-                {
-                  marginTop: -4,
-                  backgroundColor: 'transparent',
-                  justifyContent: 'center'
-                }]}>
-                <Text style={[Styles.title]}>Register</Text>
+                <Text style={[this.getStyle().title]}>Sign in</Text>
               </View>
             </TouchableOpacity>
             <View style={{ width: boxWidth }}>
               <TouchableOpacity
                 onPress={() => { }}
               >
-                <Text style={Styles.title}>
+                <Text style={this.getStyle().title}>
                   Forgot password?
               </Text>
               </TouchableOpacity>
             </View>
-            <Text style={Styles.title}>
+            <Text style={this.getStyle().title}>
               OR
               </Text>
-            <GoogleSigninButton
+            {/* <GoogleSigninButton
               style={{ width: boxWidth, height: 48 }}
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Dark}
               onPress={this.signIn()}
-              disabled={this.state.isSigninInProgress} />
+              disabled={this.state.isSigninInProgress} /> */}
             <View style={{ width: boxWidth }}>
             </View>
-            <Text style={[Styles.title, { width: boxWidth, textAlign: 'center' }]}>
+            <Text style={[this.getStyle().title, { width: boxWidth, textAlign: 'center' }]}>
               Creating an account means you’re okay with
               Strategy Essential’s
-                <Text style={[Styles.title, { color: 'gray' }]}
+                <Text style={[this.getStyle().title, { color: 'gray' }]}
                 onPress={() => {
                   console.log("pressed")
                 }}

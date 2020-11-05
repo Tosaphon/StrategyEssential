@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Dimensions, ScrollView, SafeAreaView, TouchableOpacity, DeviceEventEmitter, StyleSheet, Image, Alert, Platform } from 'react-native';
 import BaseComponent from '../../Utility/BaseComponent'
-import { Appearance, useColorScheme } from 'react-native-appearance';
+import { Appearance, useColor } from 'react-native-appearance';
 import Styles from '../../BaseView/Styles';
 import DeviceInfo from 'react-native-device-info';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -25,7 +25,6 @@ class MoreScreen extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      scheme: Appearance.getColorScheme(),
       mockThumnail: [
         {
           url: require('../../../images/mockup/podcast_01.png'),
@@ -48,19 +47,15 @@ class MoreScreen extends BaseComponent {
           title: 'World Trending'
         },
       ],
-      mockTitle: ['New Series available','Podcast Weekly updates','The Standard x Strategy Essential']
+      mockTitle: ['New Series available', 'Podcast Weekly updates', 'The Standard x Strategy Essential']
     }
   }
 
   componentDidMount() {
-    Appearance.addChangeListener(({ colorScheme }) => {
-      this.setState({ scheme: colorScheme })
-      console.log("colorScheme : ", colorScheme)
-    })
   }
 
   renderNotificationList() {
-    const { scheme, mockThumnail ,mockTitle} = this.state
+    const { mockThumnail, mockTitle } = this.state
     const thumnailWidth = Platform.isPad ? width / 4 : width / 3
     const thumnailHeight = thumnailWidth / 132 * 74
     let notificationList = []
@@ -75,19 +70,19 @@ class MoreScreen extends BaseComponent {
             source={mockThumnail[i].url}
           />
           <View style={{ flexDirection: 'column', flex: 1, paddingRight: 16 }}>
-            <Text style={[this.getStyle(scheme).title, {}]}
+            <Text style={[this.getStyle().title, {}]}
               numberOfLines={2}
             >
               {mockTitle[i]}
             </Text>
             <Text
-              style={[this.getStyle(scheme).subTitleGray, {}]}
+              style={[this.getStyle().subTitleGray, {}]}
               numberOfLines={1}
             >
               The Secret Sauce EP.199
               </Text>
             <Text
-              style={[this.getStyle(scheme).subTitleGray, {}]}
+              style={[this.getStyle().subTitleGray, {}]}
               numberOfLines={1}
             >
               19 SEP 2020
@@ -100,29 +95,12 @@ class MoreScreen extends BaseComponent {
   }
 
   render() {
-    const { scheme } = this.state
     return (
       <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
-        <SafeAreaView style={[this.getStyle(scheme).container, { width: width }]}>
+        <SafeAreaView style={[this.getStyle().container, { width: width }]}>
           <View style={{ paddingLeft: 16, paddingBottom: 8, paddingTop: 24 }}>
-            <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]}>Welcome, Suppakit</Text>
+            <Text style={[this.getStyle().title, { fontSize: 16 }]}>Welcome, Suppakit</Text>
           </View>
-          <View style={{ width: width }}>
-            <TouchableOpacity style={ScreenStyles.tableCell}
-              onPress={() => {
-                this.props.navigation.navigate(switchScreenCase.InboxScreen);
-              }}
-            >
-              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="inbox" color='white' size={26} />
-              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Inbox</Text>
-              <View style={{ width: 26, height: 26, borderRadius: 26, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={this.getStyle(scheme).title}>
-                  1</Text>
-              </View>
-              <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
-            </TouchableOpacity>
-          </View>
-          {this.renderNotificationList()}
           <View style={{ width: width }}>
             <TouchableOpacity style={ScreenStyles.tableCell}
               onPress={() => {
@@ -130,7 +108,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <FontAwesome style={{ marginLeft: 20, marginRight: 16 }} name="bookmark-o" color='white' size={26} />
-              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>My List</Text>
+            <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.myListLabel}</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -141,7 +119,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <FontAwesome5 style={{ marginLeft: 20, marginRight: 16 }} name="headphones-alt" color='white' size={26} />
-              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Podcasts Saved</Text>
+              <Text style={[this.getStyle().title, { flex: 1 }]}>Podcasts Saved</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -152,7 +130,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <Feather style={{ marginLeft: 20, marginRight: 16 }} name="settings" color='white' size={26} />
-              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>App Settings</Text>
+              <Text style={[this.getStyle().title, { flex: 1 }]}>App Settings</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
@@ -163,15 +141,13 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <Feather style={{ marginLeft: 20, marginRight: 16 }} name="help-circle" color='white' size={26} />
-              <Text style={[this.getStyle(scheme).title, { flex: 1 }]}>Help</Text>
+              <Text style={[this.getStyle().title, { flex: 1 }]}>Help</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
-          <Text style={[this.getStyle(scheme).subTitleGray, { color: '#6a6a6a', marginTop: 10 }]} allowFontScaling={false}>
+          <Text style={[this.getStyle().subTitleGray, { color: '#6a6a6a', marginTop: 10 }]} allowFontScaling={false}>
             App Version : {DeviceInfo.getVersion()}
           </Text>
-
-
           <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
             <TouchableOpacity
               activeOpacity={0.8}
@@ -193,7 +169,7 @@ class MoreScreen extends BaseComponent {
               }}
             >
               <View style={{ width: width, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={[this.getStyle(scheme).title, { fontSize: 16 }]} allowFontScaling={false}>
+                <Text style={[this.getStyle().title, { fontSize: 16 }]} allowFontScaling={false}>
                   Sign Out
               </Text>
               </View>

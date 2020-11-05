@@ -135,7 +135,7 @@ class PodcastsScreen extends BaseComponent {
     }
     return (
       <View style={{ width: width, marginTop: 20 }}>
-        <Text style={[Styles.title, { marginLeft: 20, marginVertical: 10 }]}>
+        <Text style={[this.getStyle().title, { marginLeft: 20, marginVertical: 10 }]}>
           {mockThumnail[index].title}
         </Text>
         <ScrollView
@@ -151,7 +151,7 @@ class PodcastsScreen extends BaseComponent {
 
   render() {
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         {this.renderFooter()}
         <ScrollView
           showsVerticalScrollIndicator={false}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance, TouchableOpacity, StatusBar, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import iid from '@react-native-firebase/iid';
 import RootStack from '../navigation/RootNavigation'
@@ -10,24 +10,25 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Styles from './BaseView/Styles';
 import PodcastScreen from '../components/Scenes/HomeScreen/DetailScreen/podcastPlayer'
+import BaseComponent from './Utility/BaseComponent'
 import Video from 'react-native-video';
 
 let { width, height } = Dimensions.get('window')
 
-class App extends Component {
+class App extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
       appState: AppState.currentState,
       tabbarBottomHeight: 0,
-      activeAudioBar: false,
+      activeAudioBar: true,
       slideIndicatorIndex: 1,
       numberOfList: 3,
       isMember: true,
       isPodcastPlay: false,
       isShowPodCastPlayer: false,
       loadingPreload: true,
-      currentTime: 0
+      currentTime: 0,
     };
   }
   componentDidMount() {
@@ -54,7 +55,7 @@ class App extends Component {
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
     if (enabled) {
       console.log('Authorization status:', authStatus);
     }
@@ -73,7 +74,7 @@ class App extends Component {
   };
 
   handleNavigateToPodcastPlayer = async (event) => {
-    await this.setState({ isShowPodCastPlayer: true })
+    await this.setState({ isShowPodCastPlayer: true, activeAudioBar: false, isPodcastPlay: false })
     console.log("isShowPodCastPlayer ", this.state.isShowPodCastPlayer)
   }
 
@@ -190,7 +191,12 @@ class App extends Component {
   renderRootStack() {
     return (
       <View style={{ width: width, height: height }}>
-        <RootStack />
+        {/* {Platform.OS == 'ios' ?
+          <StatusBar barStyle={this.state.scheme == 'light' ? 'dark-content' : 'light-content'} />
+          :
+          null
+        } */}
+        <RootStack scheme={this.state.scheme} />
         <PodcastScreen
           isVisible={this.state.isShowPodCastPlayer}
           dismiss={this.dismisPodcastPlayer}
@@ -243,28 +249,15 @@ class App extends Component {
   render() {
     if (this.state.loadingPreload) {
       return <SplashScreen onloadPreload={this.onloadPreload} />
-    }
-    if (this.state.isMember) {
-      return this.renderRootStack()
     } else {
-      return this.renderOnboarding()
+      if (this.state.isMember) {
+        return this.renderRootStack()
+      } else {
+        return this.renderOnboarding()
+      }
     }
+
   }
 }
-var styles = StyleSheet.create({
-  backgroundVideo: {
-    position: 'absolute',
-    width: width,
-    height: height
-  },
-  container: {
-    position: 'absolute',
-    width: width,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: 'white',
-  },
-});
 
 export default App

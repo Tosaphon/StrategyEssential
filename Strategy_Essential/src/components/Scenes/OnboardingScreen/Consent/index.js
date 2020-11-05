@@ -21,6 +21,7 @@ class Consent extends BaseComponent {
         this.setState({ isAgree: !this.state.isAgree })
     }
     navigateToHome() {
+        AsyncStorage.setItem('isConsent','true')
         AsyncStorage.setItem("isMember", "true")
         DeviceEventEmitter.emit('updateRootView');
         console.log("emit updateRootView")
@@ -29,7 +30,7 @@ class Consent extends BaseComponent {
     render() {
         const { isAgree } = this.state
         return (
-            <View style={[Styles.container, { alignItems: 'center' }]}>
+            <View style={[this.getStyle().container, { alignItems: 'center' }]}>
                 {this.renderHeader("Consents")}
                 <View
                     style={{ flex: 1, width: '85%', backgroundColor: 'white' }}
@@ -49,7 +50,7 @@ class Consent extends BaseComponent {
                             name={this.state.isAgree ? "checkbox-marked-outline" : "checkbox-blank-outline"}
                             color='white'
                             size={26} />
-                        <Text style={Styles.title}>
+                        <Text style={this.getStyle().title}>
                             I Agree to the consents
                         </Text>
                     </TouchableOpacity>
@@ -64,8 +65,8 @@ class Consent extends BaseComponent {
                         }}
                         disabled={!isAgree}
                     >
-                        <View style={[Styles.textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: isAgree ? '#dfb445' : 'gray', borderRadius: 10 }]}>
-                            <Text style={[Styles.title, {}]}>
+                        <View style={[this.getStyle().textInputView, { justifyContent: 'center', alignItems: 'center', backgroundColor: isAgree ? '#dfb445' : 'gray', borderRadius: 10 }]}>
+                            <Text style={[this.getStyle().title, {}]}>
                                 NEXT
                             </Text>
                         </View>

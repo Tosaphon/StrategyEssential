@@ -7,9 +7,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ToggleSwitch from 'toggle-switch-react-native'
+import AsyncStorage from '@react-native-community/async-storage';
 
 import Styles from '../../../BaseView/Styles';
 const { width, height } = Dimensions.get('screen')
+const ENUM_THEME = {
+  dark: "dark",
+  light: 'light'
+}
 
 class AppSetting extends BaseComponent {
   constructor(props) {
@@ -18,30 +23,50 @@ class AppSetting extends BaseComponent {
       isWifiOnly: false,
       isThaiLanguage: false,
       isLightMode: false,
+      currentTheme: ENUM_THEME.light,
       scheme: Appearance.getColorScheme()
     };
   }
 
+  componentDidMount() {
+    this.getTheme()
+  }
+
+  changeTheme = async () => {
+    const { currentTheme } = this.state
+    await this.setState({ currentTheme: currentTheme == ENUM_THEME.light ? ENUM_THEME.dark : ENUM_THEME.light })
+    await AsyncStorage.setItem('theme', currentTheme)
+    console.log('currentTheme', currentTheme)
+    DeviceEventEmitter.emit('switchTheme', { theme: currentTheme })
+  }
+
+  getTheme = async () => {
+    var theme = await AsyncStorage.getItem('theme')
+    console.log('loaded theme : ', theme)
+    theme = theme == ENUM_THEME.dark ? ENUM_THEME.dark : ENUM_THEME.light
+    await this.setState({ currentTheme: theme })
+  }
+
   render() {
-    const { isThaiLanguage, isWifiOnly ,isLightMode} = this.state
+    const { isThaiLanguage, isWifiOnly, isLightMode, currentTheme } = this.state
     return (
-      <View style={Styles.container}>
+      <View style={this.getStyle().container}>
         {this.renderHeader("App Settings")}
-        <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
-          <SafeAreaView style={[Styles.container, { width: width }]}>
+        <ScrollView style={this.getStyle().scrollView}>
+          <SafeAreaView style={[this.getStyle().container, { width: width }]}>
             <View style={{ width: width }}>
-              <View style={ScreenStyles.tableCell}>
-                <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="wifi" color='white' size={26} />
-                <Text style={[Styles.title, { flex: 1 }]}>Wifi Only</Text>
+              <View style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}>
+                <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="wifi" color={this.getIconColor()} size={26} />
+                <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.wifiOnlyLabel}</Text>
                 <View
                   style={{ paddingRight: 20 }}
                 >
                   <ToggleSwitch
                     isOn={isWifiOnly}
-                    onColor="green"
+                    onColor="#dfb445"
                     offColor="#4c5cd1"
-                    label={isWifiOnly ? 'ON' : 'OFF'}
-                    labelStyle={Styles.title}
+                    label={isWifiOnly ? global.l10n.onWifiLabel : global.l10n.offWifiLabel}
+                    labelStyle={this.getStyle().title}
                     size='medium'
                     onToggle={isOn => this.setState({ isWifiOnly: !isWifiOnly })}
                   />
@@ -49,51 +74,73 @@ class AppSetting extends BaseComponent {
               </View>
             </View>
             <View style={{ width: width }}>
-              <View style={ScreenStyles.tableCell}>
-                <SimpleLineIcons style={{ marginLeft: 20, marginRight: 16 }} name="globe" color='white' size={26} />
-                <Text style={[Styles.title, { flex: 1 }]}>Language</Text>
+              <View style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}>
+                <SimpleLineIcons style={{ marginLeft: 20, marginRight: 16 }} name="globe" color={this.getIconColor()} size={26} />
+                <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.languageLabel}</Text>
                 <View
                   style={{ paddingRight: 20 }}
                 >
                   <ToggleSwitch
-                    isOn={isThaiLanguage}
-                    onColor="4c5cd1"
+                    isOn={global.currentLanguage == 'th'}
+                    onColor="#dfb445"
                     offColor="#4c5cd1"
-                    label={isThaiLanguage ? "TH" : "EN"}
-                    labelStyle={Styles.title}
+                    label={global.currentLanguage == 'th' ? global.l10n.thaiLocalizeLabel : global.l10n.englishLocalizeLabel}
+                    labelStyle={this.getStyle().title}
                     size='medium'
-                    onToggle={isOn => this.setState({ isThaiLanguage: !isThaiLanguage })}
+                    onToggle={async () => {
+                      // this.setState({ isThaiLanguage: !isThaiLanguage })
+                      let currentLanguage = global.currentLanguage == 'th' ? 'en' : 'th'
+                      global.currentLanguage = currentLanguage
+                      global.l10n.setLanguage(currentLanguage)
+                      await AsyncStorage.setItem('currentLanguage', currentLanguage)
+                      DeviceEventEmitter.emit('switchLanguage')
+                      // this.setState({})
+                    }}
                   />
                 </View>
               </View>
             </View>
             <View style={{ width: width }}>
-              <View style={ScreenStyles.tableCell}>
-                <MaterialIcons style={{ marginLeft: 20, marginRight: 16 }} name="color-lens" color='white' size={26} />
-                <Text style={[Styles.title, { flex: 1 }]}>Theme</Text>
+              <View style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}>
+                <MaterialIcons style={{ marginLeft: 20, marginRight: 16 }} name="color-lens" color={this.getIconColor()} size={26} />
+                <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.themeLabel}</Text>
                 <View
                   style={{ paddingRight: 20 }}
                 >
                   <ToggleSwitch
-                    isOn={isLightMode}
-                    onColor="4c5cd1"
+                    isOn={currentTheme == ENUM_THEME.dark ? false : true}
+                    onColor="#dfb445"
                     offColor="#4c5cd1"
-                    label={isLightMode ? "Light" : "Dark"}
-                    labelStyle={Styles.title}
+                    label={currentTheme == ENUM_THEME.dark ? 'Dark' : 'Light'}
+                    labelStyle={this.getStyle().title}
                     size='medium'
-                    onToggle={isOn => this.setState({ isLightMode: !isLightMode })}
+                    onToggle={(isOn) => {
+                      this.changeTheme(isOn)
+                    }}
                   />
                 </View>
               </View>
             </View>
             <View style={{ width: width }}>
-              <TouchableOpacity style={ScreenStyles.tableCell}
+              <TouchableOpacity style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}
                 onPress={() => {
-                  Alert.alert('Remove all downloads', 'Are you sure?')
+                  Alert.alert(global.l10n.removeAllDownloadsAlertTitle, global.l10n.removeAllDownloadsAlertSubtitle,
+                    [
+                      {
+                        text: global.l10n.removeAllDownloadsAlertCancelTitle,
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel'
+                      },
+                      {
+                        text: global.l10n.removeAllDownloadsAlertConfirmTitle, onPress: () => {
+                          //TODO: Remove all download
+                        }
+                      }
+                    ])
                 }}
               >
-                <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="trash-can-outline" color='white' size={26} />
-                <Text style={[Styles.title, { flex: 1 }]}>Remove all downloads</Text>
+                <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="trash-can-outline" color={this.getIconColor()} size={26} />
+                <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.removeAllDownloadsLabel}</Text>
               </TouchableOpacity>
             </View>
           </SafeAreaView>

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, DeviceEventEmitter, Image, Dimensions, TouchableOpacity } from 'react-native';
 import Styles from '../../../BaseView/Styles'
+import BaseComponent from '../../../Utility/BaseComponent';
 const { width, height } = Dimensions.get('screen')
 
-class secondScreen extends Component {
+class secondScreen extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,18 +20,18 @@ class secondScreen extends Component {
 
   render() {
     return (
-      <View style={[Styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'yellow' }]}>
+      <View style={[this.getStyle().container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'yellow' }]}>
         <Image
-          style={[Styles.container, { position: 'absolute' }]}
+          style={[this.getStyle().container, { position: 'absolute' }]}
           source={require('../../../../images/Onboarding/Onboarding_02.jpg')}
           resizeMode='cover'
         />
         <View style={{ position: 'absolute', backgroundColor: 'black', opacity: 0.6, width: width, height: height }} />
         <View style={{ position: 'absolute', width: width, height: height, justifyContent: 'flex-start', alignItems: 'center' }}>
-          <Text style={[Styles.title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
+          <Text style={[this.getStyle().title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
             แก่นกลยุทธ์+
             </Text>
-          <Text style={[Styles.title, { fontSize: 20, marginBottom: 10, marginTop: 300, marginHorizontal: 24, textAlign: 'center' }]}>
+          <Text style={[this.getStyle().title, { fontSize: 20, marginBottom: 10, marginTop: 300, marginHorizontal: 24, textAlign: 'center' }]}>
             This app allows you to discover exclusive content in the form of post, video, and podcast in the following categories:
             </Text>
         </View>
@@ -42,7 +43,7 @@ class secondScreen extends Component {
             }}
           >
             <View style={{ paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={[Styles.title]}> SKIP </Text>
+              <Text style={[this.getStyle().title]}> SKIP </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -52,7 +53,7 @@ class secondScreen extends Component {
             }}
           >
             <View style={{ backgroundColor: '#dfb445', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={[Styles.title, { color: 'black' }]}>  NEXT </Text>
+              <Text style={[this.getStyle().title, { color: 'black' }]}>  NEXT </Text>
             </View>
           </TouchableOpacity>
         </View>

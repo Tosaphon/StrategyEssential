@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, DeviceEventEmitter, Image, Dimensions, TouchableOpacity } from 'react-native';
 import Styles from '../../../BaseView/Styles'
+import BaseComponent from '../../../Utility/BaseComponent';
 const { width, height } = Dimensions.get('screen')
 
-class firstScreen extends Component {
+class firstScreen extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,21 +20,21 @@ class firstScreen extends Component {
 
   render() {
     return (
-      <View style={[Styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'gray' }]}>
+      <View style={[this.getStyle().container, { justifyContent: 'center', alignItems: 'center', backgroundColor: 'gray' }]}>
         <Image
-          style={[Styles.container, { position: 'absolute' }]}
+          style={[this.getStyle().container, { position: 'absolute' }]}
           source={require('../../../../images/Onboarding/Onboarding_01.jpg')}
           resizeMode='cover'
         />
         <View style={{ position: 'absolute', backgroundColor: 'black', opacity: 0.6, width: width, height: height }} />
         <View style={{ position: 'absolute', width: width, height: height, justifyContent: 'flex-start', alignItems: 'center' }}>
-          <Text style={[Styles.title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
+          <Text style={[this.getStyle().title, { fontSize: 30, marginVertical: 60, marginHorizontal: 24 }]}>
             แก่นกลยุทธ์+
             </Text>
-          <Text style={[Styles.title, { fontSize: 20, marginBottom: 10, marginHorizontal: 24, textAlign: 'center' }]}>
+          <Text style={[this.getStyle().title, { fontSize: 20, marginBottom: 10, marginHorizontal: 24, textAlign: 'center' }]}>
             Learn the Essence of Strategy that will clear the path to success for your company
             </Text>
-          <Text style={[Styles.subTitle, { fontSize: 16, marginBottom: 20, marginHorizontal: 24, textAlign: 'center' }]}>
+          <Text style={[this.getStyle().subTitle, { fontSize: 16, marginBottom: 20, marginHorizontal: 24, textAlign: 'center' }]}>
             แก่นกลยุทธ์+ is an application for those involved in strategic science to learn how to think like a strategist.
             </Text>
         </View>
@@ -45,17 +46,18 @@ class firstScreen extends Component {
             }}
           >
             <View style={{ paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={[Styles.title]}> SKIP </Text>
+              <Text style={[this.getStyle().title]}> SKIP </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={{ marginHorizontal: 20 }}
             onPress={() => {
+              console.log('click')
               this.props.navigation.navigate('SecondScreen');
             }}
           >
             <View style={{ backgroundColor: '#dfb445', paddingHorizontal: 40, paddingVertical: 10, borderRadius: 4 }}>
-              <Text style={[Styles.title, { color: 'black' }]}>  NEXT </Text>
+              <Text style={[this.getStyle().title, { color: 'black' }]}>  NEXT </Text>
             </View>
           </TouchableOpacity>
         </View>

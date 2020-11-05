@@ -153,7 +153,7 @@ class PodcastsSavedScreen extends BaseComponent {
         const { podcastList, enableEdit, scheme } = this.state
         if (podcastList.length > 0 && podcastList) {
             return (
-                <View style={Styles.container}>
+                <View style={this.getStyle().container}>
                     {this.renderHeader("Podcasts Saved", this.editAction, this.state.enableEdit)}
                     {this.renderFooter()}
                     <ScrollView
@@ -172,7 +172,7 @@ class PodcastsSavedScreen extends BaseComponent {
             );
         } else {
             return (
-                <View style={Styles.container}>
+                <View style={this.getStyle().container}>
                     {this.renderHeader("Podcasts Saved")}
                     {this.renderFooter()}
                     {this.renderNoPodcastView()}

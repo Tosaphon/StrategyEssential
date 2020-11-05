@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Button, Text, View, Platform } from 'react-native';
+import { Button, Text, View, Platform, DeviceEventEmitter } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import analytics from '@react-native-firebase/analytics';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -32,12 +33,10 @@ import WishListScreen from '../components/Scenes/MoreScreen/WishListScreen'
 import HelpScreen from '../components/Scenes/MoreScreen/HelpScreen'
 import PodcastsSavedScreen from '../components/Scenes/MoreScreen/PodcastsSavedScreen'
 
-import OnboardingNavigationStack from './OnboardingNavigation'
-
 const NavigationStack = createStackNavigator();
 const TabBottom = createBottomTabNavigator();
 const TopTab = createMaterialTopTabNavigator()
-
+var colorScheme = ''
 
 const trasitionConfig = {
   animation: 'spring',
@@ -75,14 +74,14 @@ function SplashStackScreen() {
 
 function HomeStackTopTab() {
   const insets = useSafeAreaInsets();
-  // const scheme = useColorScheme()
-  const scheme = 'dark'
+  const scheme = colorScheme
   return (
     <TopTab.Navigator
       initialRouteName="HomeScreen"
       tabBarOptions={{
         labelStyle: { fontSize: 12, fontFamily: 'SukhumvitSet-Bold', color: scheme == 'light' ? 'black' : 'white' },
         tabStyle: { width: 100 },
+        scrollEnabled: true,
         style: {
           backgroundColor: scheme == 'light' ? 'white' : 'black',
           marginTop: insets.top,
@@ -93,10 +92,11 @@ function HomeStackTopTab() {
         },
       }}
     >
-      <TopTab.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Home' }} />
-      <TopTab.Screen name="VideosScreen" component={VideosScreen} options={{ title: 'Videos' }} />
-      <TopTab.Screen name="PodcastsScreen" component={PodcastsScreen} options={{ title: 'Podcasts' }} />
-      <TopTab.Screen name="ArticlesScreen" component={ArticlesScreen} options={{ title: 'Articles' }} />
+      <TopTab.Screen name="HomeScreen" component={HomeScreen} options={{ title: global.l10n.homeTopTabbar }} />
+      <TopTab.Screen name="VideosScreen" component={VideosScreen} options={{ title: global.l10n.videoTopTabbar }} />
+      <TopTab.Screen name="PodcastsScreen" component={PodcastsScreen} options={{ title: global.l10n.podcastTopTabbar }} />
+      <TopTab.Screen name="ArticlesScreen" component={ArticlesScreen} options={{ title: global.l10n.articleTopTabbar }} />
+      <TopTab.Screen name="FeedScreen" component={FeedScreen} options={{ title: global.l10n.feedTopTabbar }} />
     </TopTab.Navigator>
 
   );
@@ -111,6 +111,22 @@ function HomeStackScreen() {
       }}
     >
       <NavigationStack.Screen name="HomeStackTopTab" component={HomeStackTopTab} />
+      <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
+      <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
+      <NavigationStack.Screen name="VideoFullScreen" component={VideoFullScreen} />
+    </NavigationStack.Navigator>
+  );
+}
+
+function InboxStackScreen() {
+  return (
+    <NavigationStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        ...TransitionPresets.FadeFromBottomAndroid
+      }}
+    >
+      <NavigationStack.Screen name="InboxScreen" component={InboxScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
       <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
       <NavigationStack.Screen name="VideoFullScreen" component={VideoFullScreen} />
@@ -168,7 +184,6 @@ function MoreStackScreen() {
       <NavigationStack.Screen name="SettingScreen" component={MoreScreen} options={{ title: 'Setting' }} />
       <NavigationStack.Screen name="AppSettingScreen" component={AppSettingScreen} />
       <NavigationStack.Screen name="HelpScreen" component={HelpScreen} />
-      <NavigationStack.Screen name="InboxScreen" component={InboxScreen} />
       <NavigationStack.Screen name="WishListScreen" component={WishListScreen} />
       <NavigationStack.Screen name="ContentsDetailNavigation" component={ContentsDetailNavigation} />
       <NavigationStack.Screen name="ArticleDetail" component={ArticleDetail} />
@@ -179,11 +194,28 @@ function MoreStackScreen() {
 
 
 function MobileRootStack() {
-  // const scheme = useColorScheme()
-  const scheme = 'dark'
+  const scheme = colorScheme
+  const routeNameRef = React.useRef();
+  const navigationRef = React.useRef();
   return (
     <AppearanceProvider>
-      <NavigationContainer theme={scheme === 'light' ? DefaultTheme : DarkTheme}>
+      <NavigationContainer
+        theme={scheme === 'light' ? DefaultTheme : DarkTheme}
+        ref={navigationRef}
+        onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
+        onStateChange={async () => {
+          const previousRouteName = routeNameRef.current
+          const currentRouteName = navigationRef.current.getCurrentRoute().name
+          let message = "analytics : { currentRouteName: " + currentRouteName + " , previousRouteName: " + previousRouteName + " }"
+          console.log(message)
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+          }
+        }}
+      >
         <TabBottom.Navigator
           tabBarOptions={{
             activeTintColor: scheme === 'light' ? defaultThemeAppearance.active : darkThemeAppearance.active,
@@ -196,7 +228,7 @@ function MobileRootStack() {
         >
           <TabBottom.Screen
             options={{
-              tabBarLabel: 'Home',
+              tabBarLabel: global.l10n.homeTabbar,
               tabBarIcon: ({ color }) => (
                 <Octicons name="home" color={color} size={26} />
               ),
@@ -205,15 +237,16 @@ function MobileRootStack() {
             component={HomeStackScreen} />
           <TabBottom.Screen
             options={{
-              tabBarLabel: 'Feed',
+              tabBarBadge: 10,
+              tabBarLabel: global.l10n.inboxTabbar,
               tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="newspaper-variant-outline" color={color} size={26} />
+                <Feather name="inbox" color={color} size={26} />
               ),
             }}
-            name="Feed" component={FeedScreen} />
+            name="Inbox" component={InboxStackScreen} />
           <TabBottom.Screen
             options={{
-              tabBarLabel: 'Search',
+              tabBarLabel: global.l10n.searchTabbar,
               tabBarIcon: ({ color }) => (
                 <Feather name="search" color={color} size={26} />
               ),
@@ -221,7 +254,7 @@ function MobileRootStack() {
             name="Search" component={SearchStackScreen} />
           <TabBottom.Screen
             options={{
-              tabBarLabel: 'Downloads',
+              tabBarLabel: global.l10n.downloadTabbar,
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons name="download" color={color} size={26} />
               ),
@@ -229,7 +262,7 @@ function MobileRootStack() {
             name="Downloads" component={DownloadsStackScreen} />
           <TabBottom.Screen
             options={{
-              tabBarLabel: 'More',
+              tabBarLabel: global.l10n.moreTabbar,
               tabBarIcon: ({ color }) => (
                 <Ionicons name="ios-menu" color={color} size={26} />
               ),
@@ -241,24 +274,8 @@ function MobileRootStack() {
   );
 }
 
-function SplashScreenStack() {
-  return (
-    <NavigationContainer>
-      <NavigationStack.Navigator
-        screenOptions={{
-          initialRouteName: 'SplashStackScreen',
-          headerShown: false
-        }}
-      >
-        <NavigationStack.Screen name="SplashScreen" component={SplashStackScreen} />
-        <NavigationStack.Screen name="MobileRootStack" component={MobileRootStack} />
-      </NavigationStack.Navigator>
-    </NavigationContainer>
-  )
-}
-
-export default function RootStack({ navigation }) {
-
+export default function RootStack({ scheme }) {
+  colorScheme = scheme
   return MobileRootStack()
 }
 

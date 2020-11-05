@@ -54,7 +54,6 @@ class DownloadsScreen extends BaseComponent {
       enableEdit: false,
       fillList: [0, 0, 0, 0],
       destinationPath: "",
-      scheme: Appearance.getColorScheme(),
       downloadedVideo: ['', '', '', ''],
       downloadedPodcast: ['', '', '', ''],
       downloadList: [],
@@ -74,11 +73,14 @@ class DownloadsScreen extends BaseComponent {
       this.setState({ scheme: colorScheme })
     })
   }
+  componentWillUnmount() {
+    DeviceEventEmitter.removeAllListeners()
+  }
 
   startDownload = async (event) => {
     const { downloadList } = this.state
     this.setState({ downloadList: [...downloadList, event] })
-    console.log("downloadList : ", downloadList)
+    console.log("downloadList : ", downloadList.length)
     // const destination = RNBackgroundDownloader.directories.documents + '/.videos/BigBuckBunny'
     // console.log('destination : ', destination)
     // let task = RNBackgroundDownloader.download({
@@ -111,7 +113,7 @@ class DownloadsScreen extends BaseComponent {
           backgroundColor="#3d5875">
           {
             (fill) => (
-              <Text style={Styles.title}>
+              <Text style={this.getStyle().title}>
                 {this.state.fillList[index]}
               </Text>
             )
