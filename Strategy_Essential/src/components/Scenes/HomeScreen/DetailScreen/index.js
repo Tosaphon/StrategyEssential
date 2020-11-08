@@ -34,7 +34,7 @@ class DetailScreen extends BaseComponent {
       stackCount: 0,
       title: 'วางกลยุทธ์อย่างไรในโลกที่คาดเดาไม่ได้ ตอน 2 คิดและทำด้วยคาถา',
       subTitle: 'ใน Podcast The Secret Sauce ตอนนี้ ผมจะมาพูดคุยถึงขั้นตอนวางกลยุทธ์ในเชิงเครื่องมือ หรือ Tools ขั้นตอนเหล่านี้จะช่วยนำทางเราและสามารถนำไปใช้ได้จริงกับทั้งบริษัท และส่วนบุคคล โดยปกติแล้วเมื่อพูดถึงการทำกลยุทธ์ บริษัทต่างๆ มักจะให้เอาคนที่เกี่ยวข้องทั้งหมดมารวมกัน หา Facilitator สักคนเพื่อมาทำ SWOT ด้วยกัน แปะโพสต์อิทไอเดียมากมาย แล้วโหวตให้คะแนนกัน เพราะไม่มีใครกล้าฆ่าไอเดียของคนอื่นๆ ทิ้ง',
-      isVideoThumnail: true,
+      isVideoThumnail: false,
       isPodcast: false,
       isMuted: true,
       isVideoPlayed: false,
@@ -61,23 +61,31 @@ class DetailScreen extends BaseComponent {
     const isPodcast = await AsyncStorage.getItem('isPodcast')
     this.setState({ isPodcast: JSON.parse(isPodcast) })
   }
+  async setTabbarBottomHeight(height) {
+    try {
+      await AsyncStorage.setItem('tabbarBottomHeight', height.toString())
+    } catch (e) {
+      // saving error
+      console.log('error : ', e)
+    }
+  }
 
-  downloadContent() {
+  async downloadContent() {
     console.log("emit")
-    DeviceEventEmitter.emit('downloadContents',
-      {
-        title: 'Strategy Approach แนวทางการวางกลยุทธ์ที่เหมาะกับคุณที่สุดทำอย่างไร | Strategy Clinic EP.1',
-        desc: 'เมื่อความสำคัญของกลยุทธ์เพิ่มขึ้นอย่างทวีคูณในช่วงวิกฤต ตอนแรกของซีรีส์ Strategy Clinic ชวนคุณมองกลับไปที่ก้าวแรกของการวางกลยุทธ์ วาดตาราง 2x2 เพื่อหารูปแบบกลยุทธ์ที่เหมาะสมกับองค์กรของคุณเคน นครินทร์ คุยกับ ดร.ธนัย ชรินทร์สาร ที่ปรึกษาและวิทยากรด้านกลยุทธ์ ผู้มีประสบการณ์กว่า 20 ปี เจ้าของ Facebook Group Strategy Essential',
-        image: require('../../../../images/mockup/podcast_01.png'),
-        fill: 0,
-        date: '19 SEP 2020'
-      })
+    global.downloadContent.push({
+      title: 'Strategy Approach แนวทางการวางกลยุทธ์ที่เหมาะกับคุณที่สุดทำอย่างไร | Strategy Clinic EP.1',
+      desc: 'เมื่อความสำคัญของกลยุทธ์เพิ่มขึ้นอย่างทวีคูณในช่วงวิกฤต ตอนแรกของซีรีส์ Strategy Clinic ชวนคุณมองกลับไปที่ก้าวแรกของการวางกลยุทธ์ วาดตาราง 2x2 เพื่อหารูปแบบกลยุทธ์ที่เหมาะสมกับองค์กรของคุณเคน นครินทร์ คุยกับ ดร.ธนัย ชรินทร์สาร ที่ปรึกษาและวิทยากรด้านกลยุทธ์ ผู้มีประสบการณ์กว่า 20 ปี เจ้าของ Facebook Group Strategy Essential',
+      image: require('../../../../images/mockup/podcast_01.png'),
+      fill: 0,
+      date: '19 SEP 2020',
+      type: this.state.isPodcast ? 'PODCAST' : 'VIDEO'
+    })
+    let contentString = await JSON.stringify(global.downloadContent)
+    await AsyncStorage.setItem('downloadContent', contentString)
+    // await DeviceEventEmitter.emit('downloadContents')
   }
 
   navigateBack() {
-    DeviceEventEmitter.emit('audioBarActive', {
-      isActive: false,
-    });
     this.props.navigation.goBack()
   }
 
@@ -206,7 +214,7 @@ class DetailScreen extends BaseComponent {
         <Video
           pictureInPicture={true}
           fullscreen={true}
-          playInBackground={false}
+          playInBackground={true}
           paused={!isVideoPlayed}
           onFullscreenPlayerWillPresent={() => {
             this.setState({ isVideoPlayed: !isVideoPlayed })
@@ -217,7 +225,7 @@ class DetailScreen extends BaseComponent {
           }}
           onError={(error) => { console.log('video error : ', error) }}
         />
-        
+
         <SafeAreaView>
           {isVideoThumnail ?
             this.renderVideoThumbnail()
@@ -272,7 +280,7 @@ class DetailScreen extends BaseComponent {
                 :
                 <FontAwesome name="bookmark-o" color={this.getIconColor()} size={24} />
               }
-              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>My List</Text>
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>{global.l10n.myListButtonLabel}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -282,7 +290,7 @@ class DetailScreen extends BaseComponent {
               }}
             >
               <AntDesign name={isRate ? "like1" : "like2"} color={this.getIconColor()} size={30} />
-              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>{global.l10n.likeButtonLabel}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -292,12 +300,12 @@ class DetailScreen extends BaseComponent {
               }}
             >
               <MaterialCommunityIcons name="download" color={this.getIconColor()} size={30} />
-              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Download</Text>
+              <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>{global.l10n.downloadButtonLabel}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={{ width: width, flexDirection: 'column', marginTop: 20 }}>
-            <Text style={[this.getStyle().title, { marginLeft: 20 }]}>Relate Contents</Text>
+            <Text style={[this.getStyle().title, { marginLeft: 20 }]}>{global.l10n.relateContentTitleLabel}</Text>
             {this.renderRelateContents()}
           </View>
 
@@ -321,6 +329,15 @@ class DetailScreen extends BaseComponent {
             <Ionicons name="arrow-back-circle" color='white' size={30} />
           </  TouchableOpacity>
         </SafeAreaView>
+        <View
+          ///for detect tabbar bottom height
+          style={{ position: 'absolute', width: width, bottom: 0 }}
+          onLayout={event => {
+            const bottom = height - event.nativeEvent.layout.y
+            console.log('tabbar bottom : ', bottom)
+            this.setTabbarBottomHeight(bottom)
+          }}
+        />
       </View>
     );
   }

@@ -201,9 +201,6 @@ class FeedScreen extends BaseComponent {
         const { scheme } = this.state
         return (
             <SafeAreaView style={this.getStyle(scheme).container}>
-                <View style={{ width: width, height: 44, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={[this.getStyle(scheme).title, { fontSize: 20, paddingBottom: 5 }]}>Feed</Text>
-                </View>
                 {this.renderFooter()}
                 <ScrollView
                     showsVerticalScrollIndicator={false}

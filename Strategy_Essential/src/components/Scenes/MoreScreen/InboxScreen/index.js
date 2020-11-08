@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, StatusBar } from 'react-native';
 import BaseComponent from '../../../Utility/BaseComponent'
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import Styles from '../../../BaseView/Styles';
@@ -146,7 +146,8 @@ class InboxScreen extends BaseComponent {
   render() {
     return (
       <View style={this.getStyle().container}>
-        {this.renderTitleHeader("Inbox")}
+        <StatusBar barStyle='light-content'/>
+        {this.renderTitleHeader(global.l10n.InboxHeaderTitleLabel)}
         {this.renderFooter()}
         <ScrollView
           style={{ flex: 1, width: width }}

@@ -75,17 +75,22 @@ function SplashStackScreen() {
 function HomeStackTopTab() {
   const insets = useSafeAreaInsets();
   const scheme = colorScheme
+  console.log('insets : ', insets)
+  global.topTabbarMargin = insets.top
   return (
     <TopTab.Navigator
       initialRouteName="HomeScreen"
       tabBarOptions={{
-        labelStyle: { fontSize: 12, fontFamily: 'SukhumvitSet-Bold', color: scheme == 'light' ? 'black' : 'white' },
+        labelStyle: {
+          fontSize: 12,
+          fontFamily: 'SukhumvitSet-Bold',
+          color: 'white',
+          marginTop: insets.top,
+        },
         tabStyle: { width: 100 },
         scrollEnabled: true,
         style: {
-          backgroundColor: scheme == 'light' ? 'white' : 'black',
-          marginTop: insets.top,
-          // position: 'absolute',
+          backgroundColor: '#2C3E4C',
           left: 0,
           right: 0,
           elevation: 0
@@ -221,7 +226,7 @@ function MobileRootStack() {
             activeTintColor: scheme === 'light' ? defaultThemeAppearance.active : darkThemeAppearance.active,
             inactiveTintColor: scheme === 'light' ? defaultThemeAppearance.inActive : darkThemeAppearance.inActive,
             style: {
-              borderTopColor: scheme === 'light' ? 'white' : 'black',
+              borderTopColor: scheme === 'light' ? '#CDCDCD' : 'black',
             },
             labelStyle: { fontFamily: 'SukhumvitSet-Bold' }
           }}

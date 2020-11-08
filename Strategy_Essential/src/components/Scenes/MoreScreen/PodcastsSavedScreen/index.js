@@ -132,7 +132,7 @@ class PodcastsSavedScreen extends BaseComponent {
                     <MaterialCommunityIcons name="timeline-plus-outline" color='white' size={width / 5} />
                 </View>
                 <Text style={[this.getStyle(scheme).title, { marginVertical: 16, marginHorizontal: 32, textAlign: 'center' }]}>
-                    You can save some podcast in a specific time to listen to after
+                    {global.l10n.podcastSaveNoPodcastTitleLabel}
                 </Text>
                 <TouchableOpacity
                     activeOpacity={0.8}
@@ -142,7 +142,7 @@ class PodcastsSavedScreen extends BaseComponent {
                     }}
                 >
                     <View style={{ borderColor: 'white', borderWidth: 1 }}>
-                        <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO SAVE A PODCAST</Text>
+                <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>{global.l10n.podcastSaveNoPodcastButtonLabel}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -154,7 +154,7 @@ class PodcastsSavedScreen extends BaseComponent {
         if (podcastList.length > 0 && podcastList) {
             return (
                 <View style={this.getStyle().container}>
-                    {this.renderHeader("Podcasts Saved", this.editAction, this.state.enableEdit)}
+                    {this.renderHeader(global.l10n.podcastSaveTitleLabel, this.editAction, this.state.enableEdit)}
                     {this.renderFooter()}
                     <ScrollView
                         style={{ flex: 1, width: width }}
@@ -173,7 +173,7 @@ class PodcastsSavedScreen extends BaseComponent {
         } else {
             return (
                 <View style={this.getStyle().container}>
-                    {this.renderHeader("Podcasts Saved")}
+                    {this.renderHeader(global.l10n.podcastSaveTitleLabel)}
                     {this.renderFooter()}
                     {this.renderNoPodcastView()}
                 </View>

@@ -60,7 +60,7 @@ class PodcastPlayer extends BaseComponent {
         this.props.dismiss()
         DeviceEventEmitter.emit('audioBarActive', {
             isActive: true,
-            currentTime: this.state.currentTime + 1
+            currentTime: this.state.currentTime
         });
 
         return true;
@@ -73,7 +73,8 @@ class PodcastPlayer extends BaseComponent {
         await this.props.dismiss()
         await DeviceEventEmitter.emit('audioBarActive', {
             isActive: true,
-            currentTime: this.state.currentTime
+            currentTime: this.state.currentTime + 1,
+            speedIndex: this.state.speedIndex
         });
     }
 

@@ -56,24 +56,6 @@ class ArticleDetail extends BaseComponent {
                     <AntDesign name={isRate ? "like1" : "like2"} color='white' size={30} />
                     <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Like</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}
-                    onPress={() => {
-                        const options = {
-                            title: 'Share via',
-                            message: this.state.title,
-                            url: 'some share url',
-                            filename: 'test', // only for base64 file in Android
-                        };
-                        Share.open(options)
-                            .then((res) => { console.log(res) })
-                            .catch((err) => { err && console.log(err); });
-                    }}
-                >
-                    <FontAwesome5 name="share" color='white' size={30} />
-                    <Text style={[this.getStyle().title, { fontSize: 10, marginTop: 5 }]}>Share</Text>
-                </TouchableOpacity>
             </View>
         )
     }

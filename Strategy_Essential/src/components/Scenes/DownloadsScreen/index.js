@@ -11,6 +11,7 @@ import BaseComponent from '../../Utility/BaseComponent'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-navigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // const MOCK_THUMNAIL = {
 //   videos: [
@@ -64,7 +65,7 @@ class DownloadsScreen extends BaseComponent {
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       DeviceEventEmitter.addListener('navigateToPodcastDetail', this.navigateToPodcastDetail);
-      DeviceEventEmitter.addListener('downloadContents', this.startDownload);
+      // DeviceEventEmitter.addListener('downloadContents', this.fetchDownloadContent);
     });
     this.reRender = this.props.navigation.addListener('blur', () => {
       DeviceEventEmitter.removeListener('navigateToPodcastDetail')
@@ -72,9 +73,17 @@ class DownloadsScreen extends BaseComponent {
     Appearance.addChangeListener(({ colorScheme }) => {
       this.setState({ scheme: colorScheme })
     })
+    this.fetchDownloadContent()
   }
   componentWillUnmount() {
     DeviceEventEmitter.removeAllListeners()
+  }
+
+  fetchDownloadContent = async (event) => {
+    // let jsonString = await AsyncStorage.getItem('downloadContent')
+    // let downloadContetns = await JSON.parse(jsonString)
+    this.setState({ downloadList: global.downloadContent })
+    console.log(global.downloadContent)
   }
 
   startDownload = async (event) => {
@@ -123,8 +132,17 @@ class DownloadsScreen extends BaseComponent {
     )
   }
 
+  async removeContentsAt(index) {
+    console.log('remove index : ', index)
+    var array = [...this.state.downloadList];
+    let newDownloadList = await array.splice(index, 1);
+    console.log(newDownloadList)
+    await this.setState({ downloadList: newDownloadList })
+    let stringJSON = await JSON.stringify(newDownloadList)
+    await AsyncStorage.setItem('downloadContent', stringJSON)
+  }
+
   renderRemoveButton(index) {
-    const { scheme } = this.state
     return (
       <TouchableOpacity
         activeOpacity={0.9}
@@ -138,14 +156,14 @@ class DownloadsScreen extends BaseComponent {
               },
               {
                 text: 'remove', onPress: () => {
-                  this.setState({ mockVideoCount: this.state.mockVideoCount - 1 })
+                  this.removeContentsAt(index)
                 }
               }
             ])
         }}
       >
         <Text
-          style={[this.getStyle(scheme).title, { color: 'red', fontWeight: '800', fontSize: 12 }]}>
+          style={[this.getStyle().title, { color: 'red', fontWeight: '800', fontSize: 12 }]}>
           REMOVE
         </Text>
       </TouchableOpacity>
@@ -153,11 +171,11 @@ class DownloadsScreen extends BaseComponent {
   }
 
   renderContentsList() {
-    const { scheme, mockVideoCount, fillList, downloadList } = this.state
+    const { mockVideoCount, fillList, downloadList } = this.state
     const thumnailWidth = width / 3
     const thumbailHeight = thumnailWidth * 9 / 16
     var contentsList = []
-    for (var i = 0; i < downloadList.length; i++) {
+    for (var i = 0; i < global.downloadContent.length; i++) {
       contentsList.push(
         <TouchableOpacity
           activeOpacity={0.8}
@@ -170,29 +188,29 @@ class DownloadsScreen extends BaseComponent {
           <View style={{ width: this.state.width, marginVertical: 10, marginLeft: 16, flexDirection: 'row' }}>
             <Image
               style={{ width: thumnailWidth, height: thumbailHeight, backgroundColor: 'white', marginRight: 10 }}
-              source={downloadList[i].image}
+              source={global.downloadContent[i].image}
             />
             <View style={{ flexDirection: 'column', flex: 1 }}>
               <Text style={[this.getStyle().title, {}]}
                 numberOfLines={2}
               >
-                {downloadList[i].title}
+                {global.downloadContent[i].title}
               </Text>
               <Text style={[this.getStyle().subTitleGray, {}]}
                 numberOfLines={1}
               >
-                {downloadList[i].desc}
+                {global.downloadContent[i].desc}
               </Text>
               <Text style={[this.getStyle().subTitleGray, {}]}
                 numberOfLines={1}
               >
-                {downloadList[i].date}
+                {global.downloadContent[i].date}
               </Text>
             </View>
             <View style={{ width: 60, marginRight: 16, justifyContent: 'center', alignItems: 'center', height: 60 }}>
               {this.state.enableEdit ?
                 this.renderRemoveButton(i) :
-                this.state.downloadList[i] < 100 ?
+                global.downloadContent[i] < 100 ?
                   this.getProgressCircular(i) :
                   <MaterialIcons name="done" color='green' size={30} />
               }
@@ -208,24 +226,24 @@ class DownloadsScreen extends BaseComponent {
     const { scheme } = this.state
     const cycleSize = width / 3
     return (
-      <View style={[this.getStyle(scheme).container, { alignItems: 'center' }]}>
+      <SafeAreaView style={[this.getStyle(scheme).container, { alignItems: 'center' }]}>
         <View style={{ width: cycleSize, height: cycleSize, backgroundColor: 'gray', borderRadius: cycleSize, marginTop: 120, justifyContent: 'center', alignItems: 'center' }}>
           <MaterialIcons name="file-download" color='white' size={width / 4} />
         </View>
         <Text style={[this.getStyle(scheme).title, { marginVertical: 16, marginHorizontal: 32, textAlign: 'center' }]}>
-          You can download all contents such as videos or podcasts for see it later with offline mode
-          </Text>
+          {global.l10n.downloadNoVideoTitleLabel}
+        </Text>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
             this.props.navigation.navigate('Home')
           }}
         >
-          <View style={{ borderColor: 'white', borderWidth: 1 }}>
-            <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLOAD</Text>
+          <View style={{ borderColor: this.getIconColor(), borderWidth: 1 }}>
+            <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>{global.l10n.downloadNoVideoButtonLabel}</Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     )
   }
 
@@ -238,8 +256,8 @@ class DownloadsScreen extends BaseComponent {
           this.props.navigation.navigate('Home')
         }}
       >
-        <View style={{ borderColor: 'white', borderWidth: 1 }}>
-          <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>FIND MORE TO DOWNLOAD</Text>
+        <View style={{ borderColor: this.getIconColor(), borderWidth: 1 }}>
+          <Text style={[this.getStyle(scheme).title, { marginVertical: 12, marginHorizontal: 16 }]}>{global.l10n.downloadNoVideoButtonLabel}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -256,7 +274,7 @@ class DownloadsScreen extends BaseComponent {
 
   render() {
     const { enableEdit, scheme, downloadList } = this.state
-    if (downloadList.length == 0) {
+    if (global.downloadContent.length == 0) {
       return this.renderNoVideoView()
     } else {
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, ScrollView, SafeAreaView, TouchableOpacity, DeviceEventEmitter, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, Dimensions, ScrollView, SafeAreaView, TouchableOpacity, DeviceEventEmitter, StyleSheet, Image, Alert, StatusBar } from 'react-native';
 import BaseComponent from '../../../Utility/BaseComponent'
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -34,10 +34,11 @@ class AppSetting extends BaseComponent {
 
   changeTheme = async () => {
     const { currentTheme } = this.state
-    await this.setState({ currentTheme: currentTheme == ENUM_THEME.light ? ENUM_THEME.dark : ENUM_THEME.light })
-    await AsyncStorage.setItem('theme', currentTheme)
-    console.log('currentTheme', currentTheme)
-    DeviceEventEmitter.emit('switchTheme', { theme: currentTheme })
+    const toggleTheme = currentTheme == ENUM_THEME.light ? ENUM_THEME.dark : ENUM_THEME.light
+    await this.setState({ currentTheme: toggleTheme })
+    await AsyncStorage.setItem('theme', toggleTheme)
+    console.log('currentTheme', toggleTheme)
+    await DeviceEventEmitter.emit('switchTheme', { theme: toggleTheme })
   }
 
   getTheme = async () => {
@@ -51,9 +52,11 @@ class AppSetting extends BaseComponent {
     const { isThaiLanguage, isWifiOnly, isLightMode, currentTheme } = this.state
     return (
       <View style={this.getStyle().container}>
+        <StatusBar barStyle='light-content'/>
         {this.renderHeader("App Settings")}
         <ScrollView style={this.getStyle().scrollView}>
           <SafeAreaView style={[this.getStyle().container, { width: width }]}>
+            {this.renderFooter()}
             <View style={{ width: width }}>
               <View style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}>
                 <MaterialCommunityIcons style={{ marginLeft: 20, marginRight: 16 }} name="wifi" color={this.getIconColor()} size={26} />
@@ -108,7 +111,7 @@ class AppSetting extends BaseComponent {
                   style={{ paddingRight: 20 }}
                 >
                   <ToggleSwitch
-                    isOn={currentTheme == ENUM_THEME.dark ? false : true}
+                    isOn={currentTheme == ENUM_THEME.dark ? true : false}
                     onColor="#dfb445"
                     offColor="#4c5cd1"
                     label={currentTheme == ENUM_THEME.dark ? 'Dark' : 'Light'}

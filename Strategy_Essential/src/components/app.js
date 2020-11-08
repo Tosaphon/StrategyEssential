@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Dimensions, DeviceEventEmitter, AppState, Appearance, TouchableOpacity, StatusBar, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import iid from '@react-native-firebase/iid';
+
 import RootStack from '../navigation/RootNavigation'
 import OnboardingNavigation from '../navigation/OnboardingNavigation'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -14,6 +14,10 @@ import BaseComponent from './Utility/BaseComponent'
 import Video from 'react-native-video';
 
 let { width, height } = Dimensions.get('window')
+
+const ENUM_SPEED = [
+  1, 1.5, 2, 0.5
+]
 
 class App extends BaseComponent {
   constructor(props) {
@@ -29,6 +33,7 @@ class App extends BaseComponent {
       isShowPodCastPlayer: false,
       loadingPreload: true,
       currentTime: 0,
+      speedIndex: 0,
     };
   }
   componentDidMount() {
@@ -38,16 +43,10 @@ class App extends BaseComponent {
     this.eventListener = DeviceEventEmitter.addListener('onBoardingIndicator', this.handleSlideIndicator);
     this.eventListener = DeviceEventEmitter.addListener('updateRootView', this.handleUpdateRootView);
     AppState.addEventListener("change", this._handleAppStateChange);
-    this.getToken()
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-
-  async getToken() {
-    const token = await iid().getToken();
-    console.log('token: ', token);
   }
 
   async requestUserPermission() {
@@ -90,7 +89,8 @@ class App extends BaseComponent {
   }
 
   handleActiveAudioBar = async (event) => {
-    await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive })
+    await this.getTabbarBottomHeight()
+    await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive ,speedIndex:event.speedIndex })
     const time = await Math.round(event.currentTime)
     this.player && this.player.seek(time)
     console.log("seek time : ", event)
@@ -127,8 +127,14 @@ class App extends BaseComponent {
     const thumnailWidth = width / 7
     return (
       <View>
-        {tabbarBottomHeight != 0 && activeAudioBar ?
-          <View
+        {tabbarBottomHeight && activeAudioBar ?
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={{ justifyContent: 'center', alignItems: 'center' }}
+            onPress={() => {
+              // DeviceEventEmitter.emit('navigateToPodcastPlayer')
+              this.setState({ isShowPodCastPlayer: true, isPodcastPlay: false })
+            }}
             style={{
               position: 'absolute',
               width: width,
@@ -149,15 +155,9 @@ class App extends BaseComponent {
                 this.player = ref
               }}
             />
-            <TouchableOpacity
-              style={{ justifyContent: 'center', alignItems: 'center' }}
-              onPress={() => {
-                this.setState({ isShowPodCastPlayer: true, isPodcastPlay: false })
-              }}
-            >
-              <View style={{ width: thumnailWidth, height: thumnailWidth * 3 / 4, backgroundColor: 'black', marginLeft: 20, marginVertical: 10 }}>
-              </View>
-            </TouchableOpacity>
+
+            <View style={{ width: thumnailWidth, height: thumnailWidth * 3 / 4, backgroundColor: 'black', marginLeft: 20, marginVertical: 10 }}>
+            </View>
             <Text
               style={[Styles.title, { flex: 1, color: 'black', marginHorizontal: 12 }]}
               numberOfLines={2}
@@ -181,7 +181,7 @@ class App extends BaseComponent {
               <Ionicons name="close" color='black' size={30} />
             </TouchableOpacity>
 
-          </View>
+          </TouchableOpacity>
           : null
         }
       </View>
@@ -191,16 +191,17 @@ class App extends BaseComponent {
   renderRootStack() {
     return (
       <View style={{ width: width, height: height }}>
-        {/* {Platform.OS == 'ios' ?
+        {Platform.OS == 'ios' ?
           <StatusBar barStyle={this.state.scheme == 'light' ? 'dark-content' : 'light-content'} />
           :
           null
-        } */}
+        }
         <RootStack scheme={this.state.scheme} />
         <PodcastScreen
           isVisible={this.state.isShowPodCastPlayer}
           dismiss={this.dismisPodcastPlayer}
           currentTime={this.state.currentTime}
+          speedIndex={this.state.speedIndex}
         />
         {this.renderAudioBar()}
       </View>

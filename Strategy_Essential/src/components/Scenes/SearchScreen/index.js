@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, DeviceEventEmitter, ScrollView } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, SafeAreaView, TextInput, Keyboard, Image, DeviceEventEmitter, ScrollView, StatusBar } from 'react-native';
 import { Appearance, useColorScheme } from 'react-native-appearance';
 import BaseComponent from '../../Utility/BaseComponent'
 
@@ -171,21 +171,12 @@ class SearchScreen extends BaseComponent {
 
   renderSearchView() {
     return (
-      <SafeAreaView style={{ width: this.state.width, flexDirection: 'row', alignItems: 'center' }}>
-        <View style={{
-          marginVertical: 10,
-          marginLeft: 24,
-          marginRight: 12,
-          backgroundColor: '#2f2f2f',
-          borderRadius: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-          flex: 1
-        }}>
+      <SafeAreaView style={{ width: this.state.width, flexDirection: 'row', alignItems: 'center', backgroundColor: '#2C3E4C' }}>
+        <View style={this.getStyle().searchBox}>
           <Feather name="search" color='gray' size={26} style={{ marginLeft: 16, marginVertical: 4 }} />
           <TextInput
             style={[this.getStyle().textInput, { marginLeft: 8, flex: 1, color: 'white' }]}
-            placeholder='Search'
+            placeholder={global.l10n.searchPlaceHolderTitleLabel ?? 'Search'}
             placeholderTextColor='gray'
             onFocus={() => { this.setState({ searchBegin: true }) }}
             onChangeText={async text => {
@@ -208,9 +199,9 @@ class SearchScreen extends BaseComponent {
                 Keyboard.dismiss(0)
               }}
             >
-              <Text style={this.getStyle().title}>
-                Cancle
-          </Text>
+              <Text style={[this.getStyle().title, { color: 'white' }]}>
+                {global.l10n.searchCancelButtonLabel}
+              </Text>
             </TouchableOpacity>
           </View> : null
         }
@@ -228,7 +219,7 @@ class SearchScreen extends BaseComponent {
           onPress={() => { this.setState({ selectedSection: headerSection.Videos }) }}
         >
           <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Videos) }]}>
-            Videos ({valueVideos})
+            {global.l10n.searchVideoMenuButtonLabel} ({valueVideos})
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -237,7 +228,7 @@ class SearchScreen extends BaseComponent {
           onPress={() => { this.setState({ selectedSection: headerSection.Podcasts }) }}
         >
           <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Podcasts) }]}>
-            Podcasts ({valuePodcasts})
+            {global.l10n.searchPodcastsMenuButtonLabel} ({valuePodcasts})
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -246,7 +237,7 @@ class SearchScreen extends BaseComponent {
           onPress={() => { this.setState({ selectedSection: headerSection.Articles }) }}
         >
           <Text style={[this.getStyle().title, { color: this.getToggleIcon(selectedSection == headerSection.Articles) }]}>
-            Articles ({valueArticles})
+            {global.l10n.searchArticlesMenuButtonLabel} ({valueArticles})
             </Text>
         </TouchableOpacity>
       </View>
@@ -256,13 +247,13 @@ class SearchScreen extends BaseComponent {
   renderNoresultScreen() {
     const cycleSize = width / 3
     return (
-      <View style={[this.getStyle().container, { alignItems: 'center' }]}>
+      <View style={[this.getStyle().container, { alignItems: 'center', backgroundColor: 'transparent' }]}>
         <View style={{ width: cycleSize, height: cycleSize, marginTop: 40, justifyContent: 'center', alignItems: 'center' }}>
           <Feather name="search" color={this.getIconColor(false)} size={width / 5} />
         </View>
         <Text style={[this.getStyle().title, { marginVertical: -10, marginHorizontal: 32, textAlign: 'center' }]}>
-          No Result Fond
-            </Text>
+          {global.l10n.searchNoResultTitleLabel}
+        </Text>
       </View>
     )
   }
@@ -272,6 +263,9 @@ class SearchScreen extends BaseComponent {
     if (result) {
       return (
         <View style={this.getStyle().container}>
+          <StatusBar
+            barStyle='dark-content'
+          />
           {this.renderFooter()}
           {this.renderSearchView()}
           {this.renderSectionHeader()}
@@ -291,7 +285,7 @@ class SearchScreen extends BaseComponent {
       );
     } else {
       return (
-        <View style={this.getStyle().container}>
+        <View style={[this.getStyle().container, {}]}>
           {this.renderFooter()}
           {this.renderSearchView()}
           <ScrollView
@@ -301,6 +295,7 @@ class SearchScreen extends BaseComponent {
               this.setState({ searchBegin: false })
               Keyboard.dismiss(0)
             }}
+            scrollEnabled={false}
           >
             {this.renderNoresultScreen()}
 

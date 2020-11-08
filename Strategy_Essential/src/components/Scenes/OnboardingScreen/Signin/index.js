@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from '../../../BaseView/Styles'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import { authentication } from '../../../BaseView/Service'
 
 import {
   GoogleSignin,
@@ -21,8 +21,8 @@ class Signin extends BaseComponent {
     super(props);
     this.state = {
       isLoading: false,
-      email: 'tosaphon.r@dvdesigngroup.co.th',
-      password: 'a12345678',
+      email: '',
+      password: '',
       isPasswordValid: true,
       isShowPassword: false,
       isLoading: false
@@ -37,40 +37,13 @@ class Signin extends BaseComponent {
     });
   }
 
-  emailPasswordSignIn = async () => {
-    this.setState({ isLoading: true })
-    let self = this
-    const { email, password } = this.state
-    let param = {
-      username: email,
-      password: password,
+  handleSignIn = async (result) => {
+    if (result.isError) {
+      this.showAlert(result.response)
+    } else {
+      await this.navigateToNextScreen()
+      this.setState({ isLoading: false })
     }
-    console.log('param : ', param)
-    await axios.post('http://coachflix.mmzilla.com/api/v1/login', param)
-      .then(async (response) => {
-        console.log(response)
-        await self.loadProfile(response.data.data.token)
-      })
-      .catch(function (error) {
-        self.showAlert(error)
-      })
-  }
-
-  loadProfile = async (userToken) => {
-    const authStr = 'Bearer ' + userToken
-    let self = this
-    await axios.get('http://coachflix.mmzilla.com/api/v1/profile', {
-      headers: { 'Authorization': authStr }
-    })
-      .then(async function (response) {
-        let profile = await JSON.stringify(response.data.data)
-        await AsyncStorage.setItem('userProfile', profile)
-        await self.navigateToNextScreen(userToken)
-        self.setState({ isLoading: false })
-      })
-      .catch(function (error) {
-        self.showAlert(error)
-      });
   }
 
   showAlert = (error) => {
@@ -88,7 +61,8 @@ class Signin extends BaseComponent {
     )
   }
 
-  navigateToNextScreen = async (userToken) => {
+  navigateToNextScreen = async () => {
+    console.log('navigate')
     let isConsentStr = await AsyncStorage.getItem('isConsent')
     let isConsent = await JSON.parse(isConsentStr)
     if (isConsent) {
@@ -97,7 +71,6 @@ class Signin extends BaseComponent {
       DeviceEventEmitter.emit('updateRootView');
       console.log("emit updateRootView")
     } else {
-      await AsyncStorage.setItem('token', userToken)
       this.props.navigation.navigate('ConsentsScreen')
     }
   }
@@ -130,12 +103,12 @@ class Signin extends BaseComponent {
     const { isPasswordValid, password, email, isShowPassword } = this.state
     return (
       <View style={this.getStyle().container}>
-        {this.renderHeader("")}
+        {this.renderHeader("Sign in")}
         <ScrollView style={{ flex: 1, width: '100%' }}>
           <View style={ScreenStyles.container}>
             <View style={[this.getStyle().textInputView, { marginTop: 40 }]}>
               <TextInput
-                placeholder={global.l10n.emailTextFieldPlaceholderTitle}
+                placeholder={global.l10n.emailTextFieldPlaceholderTitle ?? ""}
                 style={[this.getStyle().title, Styles.textInput, { height: 32, width: boxWidth - 48 }]}
                 placeholderTextColor="gray"
                 maxLength={40}
@@ -193,9 +166,11 @@ class Signin extends BaseComponent {
             <TouchableOpacity
               onPress={() => {
                 if (isPasswordValid && password.length > 0) {
-                  this.emailPasswordSignIn()
+                  this.setState({ isLoading: true })
+                  authentication(this.handleSignIn,email,password)
                 } else {
                   Alert.alert(global.l10n.errorLoginPasswordLessTitle, global.l10n.errorLoginPasswrodLessSubtitle)
+                  this.setState({ isLoading: true })
                 }
               }}
             >

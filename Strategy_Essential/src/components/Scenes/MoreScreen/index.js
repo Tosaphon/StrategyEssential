@@ -47,11 +47,19 @@ class MoreScreen extends BaseComponent {
           title: 'World Trending'
         },
       ],
-      mockTitle: ['New Series available', 'Podcast Weekly updates', 'The Standard x Strategy Essential']
+      mockTitle: ['New Series available', 'Podcast Weekly updates', 'The Standard x Strategy Essential'],
+      profile: null
     }
   }
 
   componentDidMount() {
+    this.getProfile()
+  }
+
+  async getProfile() {
+    let stringProfile = await AsyncStorage.getItem('profile')
+    let profile = await JSON.parse(stringProfile)
+    this.setState({ profile: profile })
   }
 
   renderNotificationList() {
@@ -96,72 +104,74 @@ class MoreScreen extends BaseComponent {
 
   render() {
     return (
-      <ScrollView style={{ width: width, backgroundColor: '#1E1F1E' }}>
+      <ScrollView style={this.getStyle().scrollView}>
         <SafeAreaView style={[this.getStyle().container, { width: width }]}>
           <View style={{ paddingLeft: 16, paddingBottom: 8, paddingTop: 24 }}>
-            <Text style={[this.getStyle().title, { fontSize: 16 }]}>Welcome, Suppakit</Text>
+            <Text style={[this.getStyle().title, { fontSize: 16 }]}>{global.l10n.welcomeLabel} {this.state.profile ? this.state.profile.name : ""}</Text>
           </View>
           <View style={{ width: width }}>
-            <TouchableOpacity style={ScreenStyles.tableCell}
+            <TouchableOpacity style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}
               onPress={() => {
                 this.props.navigation.navigate(switchScreenCase.WishListScreen);
               }}
             >
-              <FontAwesome style={{ marginLeft: 20, marginRight: 16 }} name="bookmark-o" color='white' size={26} />
-            <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.myListLabel}</Text>
+              <FontAwesome style={{ marginLeft: 20, marginRight: 16 }} name="bookmark-o" color={this.getIconColor()} size={26} />
+              <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.myListLabel}</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
           <View style={{ width: width }}>
-            <TouchableOpacity style={ScreenStyles.tableCell}
+            <TouchableOpacity style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}
               onPress={() => {
                 this.props.navigation.navigate(switchScreenCase.PodcastsSavedScreen);
               }}
             >
-              <FontAwesome5 style={{ marginLeft: 20, marginRight: 16 }} name="headphones-alt" color='white' size={26} />
-              <Text style={[this.getStyle().title, { flex: 1 }]}>Podcasts Saved</Text>
+              <FontAwesome5 style={{ marginLeft: 20, marginRight: 16 }} name="headphones-alt" color={this.getIconColor()} size={26} />
+              <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.podcastSaveTitleLabel}</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
           <View style={{ width: width }}>
-            <TouchableOpacity style={ScreenStyles.tableCell}
+            <TouchableOpacity style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}
               onPress={() => {
                 this.props.navigation.navigate(switchScreenCase.AppSettingScreen);
               }}
             >
-              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="settings" color='white' size={26} />
-              <Text style={[this.getStyle().title, { flex: 1 }]}>App Settings</Text>
+              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="settings" color={this.getIconColor()} size={26} />
+              <Text style={[this.getStyle().title, { flex: 1 }]}>{global.l10n.appSettingTitle}</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
           <View style={{ width: width }}>
-            <TouchableOpacity style={ScreenStyles.tableCell}
+            <TouchableOpacity style={[ScreenStyles.tableCell, this.getStyle().backgroundColor]}
               onPress={() => {
                 this.props.navigation.navigate(switchScreenCase.HelpScreen);
               }}
             >
-              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="help-circle" color='white' size={26} />
+              <Feather style={{ marginLeft: 20, marginRight: 16 }} name="help-circle" color={this.getIconColor()} size={26} />
               <Text style={[this.getStyle().title, { flex: 1 }]}>Help</Text>
               <MaterialIcons style={{ paddingRight: 24 }} name="navigate-next" color='#737373' size={26} />
             </TouchableOpacity>
           </View>
-          <Text style={[this.getStyle().subTitleGray, { color: '#6a6a6a', marginTop: 10 }]} allowFontScaling={false}>
+          <Text style={[this.getStyle().subTitleGray, { color: '#6a6a6a', marginTop: 10, marginLeft: 16 }]} allowFontScaling={false}>
             App Version : {DeviceInfo.getVersion()}
           </Text>
           <View style={{ width: width, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                Alert.alert("Would you like to sign out?", "",
+                Alert.alert(global.l10n.logoutAlertTitleLabel, global.l10n.logoutAlertSubtitleLabel,
                   [
                     {
-                      text: 'Cancel',
+                      text: global.l10n.logoutAlertCancleButtonLabel,
                       onPress: () => console.log('Cancel Pressed'),
                       style: 'cancel'
                     },
                     {
-                      text: 'Sign out', onPress: () => {
+                      text: global.l10n.logoutAlertSubmitButtonLabel, onPress: () => {
+                        AsyncStorage.setItem("theme", 'dark')
                         AsyncStorage.setItem("isMember", "false")
+                        DeviceEventEmitter.emit('switchTheme', { theme: 'dark' })
                         DeviceEventEmitter.emit('updateRootView');
                       }
                     }
@@ -170,8 +180,8 @@ class MoreScreen extends BaseComponent {
             >
               <View style={{ width: width, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={[this.getStyle().title, { fontSize: 16 }]} allowFontScaling={false}>
-                  Sign Out
-              </Text>
+                  {global.l10n.logoutButtonLabel}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>

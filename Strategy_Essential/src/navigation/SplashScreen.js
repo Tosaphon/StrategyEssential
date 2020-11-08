@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { CommonActions } from '@react-navigation/native';
 import FullScreenError from '../components/BaseView/FullScreenError'
 import LocalizedStrings from "react-native-localization";
+import iid from '@react-native-firebase/iid';
 import axios from 'axios';
 
 let strings = new LocalizedStrings({
@@ -85,6 +86,8 @@ class SplashScreen extends Component {
   async onloadPreload() {
     const isMember = await AsyncStorage.getItem("isMember")
     const currentLanguage = await AsyncStorage.getItem("currentLanguage")
+    await this.getDownloadContent()
+    await this.getToken()
     await this.getLanguagePack()
     if (currentLanguage) {
       global.currentLanguage = currentLanguage
@@ -100,28 +103,36 @@ class SplashScreen extends Component {
 
   async getLanguagePack() {
     console.log('get localize')
-    await axios.get('http://coachflix.mmzilla.com/api/v1/localization')
-      .then((response) => {
+    await axios.get('https://www.strategyessential.app/api/v1/localization')
+      .then(async (response) => {
         let l10n = response.data.data
         global.l10n = new LocalizedStrings(l10n)
+        await AsyncStorage.setItem('l10n', await JSON.stringify(l10n))
         console.log('localize response : ', l10n)
       })
-      .catch((error) => {
-        console.log(error)
-        this.setState({isError:true})
+      .catch(async (error) => {
+        let strL10n = await AsyncStorage.getItem('l10n')
+        if (strL10n) {
+          let l10n = await JSON.parse(strL10n)
+          global.l10n = new LocalizedStrings(l10n)
+        } else {
+          await this.setState({ isError: true })
+        }
       })
+  }
 
-    // const languagePack = await AsyncStorage.getItem("languagePack")
-    // if (languagePack) {
-    //   global.l10n = await JSON.parse(languagePack)
-    // } else {
-    //   let l10n = await JSON.parse(painString)
-    //   await AsyncStorage.setItem('languagePack', l10n)
-    //   global.l10n = l10n
+  async getToken() {
+    const token = await iid().getToken();
+    await AsyncStorage.setItem('fcmToken', token)
+  }
+
+  async getDownloadContent() {
+    // let stringDownloaded = await AsyncStorage.getItem("downloadContent")
+    // var jsonDownload = []
+    // if (stringDownloaded) {
+    //   jsonDownload = await JSON.stringify(stringDownloaded)
     // }
-    // let l10n = strings
-    // await AsyncStorage.setItem('languagePack', l10n)
-    // global.l10n = l10n
+    global.downloadContent = []
   }
 
   render() {

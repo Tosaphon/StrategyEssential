@@ -36,9 +36,8 @@ class BaseComponent extends Component {
 
     getTheme = async () => {
         var theme = await AsyncStorage.getItem('theme')
-        theme = theme == ENUM_THEME.dark ? ENUM_THEME.dark : ENUM_THEME.light
+        theme = theme == ENUM_THEME.light ? ENUM_THEME.light : ENUM_THEME.dark
         await this.setState({ scheme: theme })
-
     }
     // async l10n() {
     //     if (global.currentLanguage == 'en') {
@@ -74,11 +73,13 @@ class BaseComponent extends Component {
         return <LoadingView visible={visible} />
     }
     renderTitleHeader(title) {
+        const { scheme } = this.state
         return (
             <View style={{
                 width: width,
                 justifyContent: 'center',
                 alignItems: 'center',
+                backgroundColor: scheme == 'light' ? '#2C3E4C' : null
             }}>
                 <SafeAreaView style={{
                     width: width,
@@ -87,7 +88,7 @@ class BaseComponent extends Component {
                     alignItems: 'center',
                     marginVertical: 10,
                 }}>
-                    <Text style={[this.getStyle().title, { width: '70%', textAlign: 'center', fontSize: 20 }]}>{title}</Text>
+                    <Text style={[this.getStyle().titleHeader, { width: '70%', textAlign: 'center', fontSize: 20 }]}>{title}</Text>
                 </SafeAreaView>
             </View>
         )
@@ -104,6 +105,7 @@ class BaseComponent extends Component {
                 width: width,
                 justifyContent: 'center',
                 alignItems: 'center',
+                backgroundColor: scheme == 'light' ? '#2C3E4C' : null
             }}>
                 <SafeAreaView style={{
                     width: width,
@@ -120,10 +122,10 @@ class BaseComponent extends Component {
                         }}
                         onPress={() => { this.navigateBack() }}
                     >
-                        <Ionicons name="chevron-back" color={scheme == 'light' ? 'black' : 'white'} size={26} />
+                        <Ionicons name="chevron-back" color='white' size={26} />
                     </TouchableOpacity>
 
-                    <Text style={[this.getStyle().title, { width: '70%', textAlign: 'center', fontSize: 20 }]}>{title}</Text>
+                    <Text style={[this.getStyle().titleHeader, { width: '70%', textAlign: 'center', fontSize: 20 }]}>{title}</Text>
                     <TouchableOpacity
                         style={{
                             width: '15%',
@@ -180,6 +182,7 @@ class BaseComponent extends Component {
         )
     }
     renderFooter() {
+        const { scheme } = this.state
         return (
             <View style={{
                 width: width,
@@ -206,6 +209,7 @@ class BaseComponent extends Component {
         const { scheme } = this.state
         return scheme === 'light' ? isUseCI ? '#dfb445' : 'black' : 'white'
     }
+
     getToggleIcon(isSelect) {
         const { scheme } = this.state
         if (scheme === 'light') {
@@ -250,6 +254,11 @@ class BaseComponent extends Component {
                 fontFamily: 'SukhumvitSet-Bold',
                 fontWeight: 'bold'
             },
+            titleHeader: {
+                color: 'white',
+                fontFamily: 'SukhumvitSet-Bold',
+                fontWeight: 'bold'
+            },
             subTitle: {
                 color: scheme === 'light' ? 'black' : 'white',
                 fontFamily: 'SukhumvitSet-Medium'
@@ -263,6 +272,18 @@ class BaseComponent extends Component {
                 fontSize: 20,
                 fontFamily: 'SukhumvitSet-Bold',
                 fontWeight: 'bold'
+            },
+            searchBox: {
+                marginTop: 10,
+                marginBottom:20,
+                marginLeft: 24,
+                marginRight: 12,
+                paddingVertical:4,
+                backgroundColor: scheme == 'light' ? 'white': '#2f2f2f',
+                borderRadius: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                flex: 1
             },
             textInputView: {
                 backgroundColor: '#2e2e2f',

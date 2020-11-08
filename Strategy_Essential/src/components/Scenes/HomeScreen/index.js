@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, SafeAreaView, Image, Dimensions, Platform, DeviceEventEmitter, TouchableOpacity, Linking } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
+import { View, Text, ScrollView, SafeAreaView, Image, Dimensions, Platform, DeviceEventEmitter, TouchableOpacity, Linking, StatusBar, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import BaseComponent from '../../Utility/BaseComponent'
-import Styles from '../../BaseView/Styles';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Foundation from 'react-native-vector-icons/Foundation';
 import Modal from 'react-native-modal';
-import axios from 'axios';
-import { Appearance, useColorScheme } from 'react-native-appearance';
 import LoadingView from '../../BaseView/LoadingView';
-
+import { authentication, getContents } from '../../BaseView/Service'
+import Video from 'react-native-video'
 
 const { width, height } = Dimensions.get('window')
 const switchScreenCase = {
@@ -24,10 +21,12 @@ class HomeScreen extends BaseComponent {
     this.state = {
       ...this.state,
       access_token: '',
-      scheme: Appearance.getColorScheme(),
       toptabHeight: 0,
       showPopup: false,
       isLoading: true,
+      highlights: null,
+      categories: null,
+      isTeserPause: false,
       mockThumnail: [
         {
           url: require('../../../images/mockup/podcast_01.png'),
@@ -60,86 +59,41 @@ class HomeScreen extends BaseComponent {
     this.reRender = this.props.navigation.addListener('blur', () => {
       DeviceEventEmitter.removeListener('navigateToPodcastDetail')
     });
-    Appearance.addChangeListener(({ colorScheme }) => {
-      this.setState({ scheme: colorScheme })
-      console.log("colorScheme : ", colorScheme)
-    })
-    // this.login()
-    this.postLogin()
+    this.reRender = this.props.navigation.addListener('focus', () => {
+      this.setState({ isTeserPause: false })
+    });
+    this.reRender = this.props.navigation.addListener('blur', () => {
+      this.setState({ isTeserPause: true })
+    });
+
+    this.onload()
+  }
+
+  onload = async () => {
+    await authentication(this.handleSignIn)
+    await getContents(this.handleGetContents)
   }
 
   dismissPopup() {
-
   }
 
-  async setTabbarBottomHeight(height) {
-    try {
-      await AsyncStorage.setItem('tabbarBottomHeight', height.toString())
-    } catch (e) {
-      // saving error
-      console.log('error : ', e)
+  handleGetContents = async (result) => {
+    if (result.isError) {
+      console.log('fail : ', result)
+    } else {
+      console.log('success : ', result)
+      let content = result.response.data.data.home
+      await this.setState({ highlights: content.highlight, categories: content.categories })
     }
   }
 
-  postLogin() {
-    console.log('postLogin')
-    let param = {
-      username: 'tosaphon.r@dvdesigngroup.co.th',
-      password: 'a12345678'
+  handleSignIn = async (result) => {
+    if (result.isError) {
+      Alert.alert('error')
+      console.log(result.response)
     }
-    axios.post('http://coachflix.mmzilla.com/api/v1/login', param)
-      .then((response) => {
-        console.log(response)
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
   }
 
-  async login() {
-    console.log('login');
-    axios.defaults.timeout = 180000;
-    var self = this
-    var bodyFormData = new FormData();
-    bodyFormData.append('username', 'test');
-    bodyFormData.append('password', '123456789');
-    await axios({
-      method: 'post',
-      url: 'http://coachflix.mmzilla.com/api/v1/login',
-      data: bodyFormData,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      }
-    })
-      .then(async function (response) {
-        //handle success
-        console.log(response);
-        const token = response.data.data.token
-        console.log('token : ', token)
-        await self.setState({ access_token: token })
-        self.getProfile()
-      })
-      .catch(function (error) {
-        //handle error
-        console.log(error);
-      });
-  }
-
-  async getProfile() {
-    const AuthStr = 'Bearer ' + this.state.access_token
-    await axios.get('http://coachflix.mmzilla.com/api/v1/profile', {
-      headers: { 'Authorization': AuthStr }
-    })
-      .then(async function (response) {
-        //handle success
-        console.log(response);
-      })
-      .catch(function (response) {
-        //handle error
-        console.log(response);
-      });
-  }
   async switchToScreen(screenName) {
     await AsyncStorage.setItem('isPodcast', 'false')
     this.props.navigation.navigate(screenName, { isPodcast: false })
@@ -233,8 +187,6 @@ class HomeScreen extends BaseComponent {
         isVisible={this.state.showPopup}
         hasBackdrop={true}
         style={{ margin: 0, width: width, height: height }}
-      // backdropColor='black'
-      // backdropOpacity={0.4}
       >
         <View style={{ width: width, height: height, position: 'absolute', backgroundColor: 'black', opacity: 0.5, }} />
         <View style={{ width: width, height: height, justifyContent: 'center', alignItems: 'center' }}>
@@ -265,63 +217,73 @@ class HomeScreen extends BaseComponent {
             </TouchableOpacity>
           </View>
         </View>
-
       </Modal>
     )
+  }
+
+  renderHighlight() {
+    const { highlights, categories, isTeserPause } = this.state
+    let contentHeight = width * 9 / 16
+    if (highlights) {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            this.switchToScreen(switchScreenCase.DetailScreen)
+          }}
+        >
+          <SafeAreaView>
+            {highlights.video[0] ?
+              <Video
+                style={{
+                  width: width,
+                  height: contentHeight,
+                }}
+                paused={isTeserPause}
+                // muted={isMuted}
+                source={{ uri: highlights.video[0].path }}
+                ref={(ref) => {
+                  this.player = ref
+                }}
+                resizeMode={"cover"}
+                onError={(error) => { console.log('video error : ', error) }}
+              />
+              :
+              <Image
+                style={{
+                  width: width,
+                  height: contentHeight
+                }}
+                resizeMode='contain'
+                source={{ uri: highlights.image[1].path }}
+              />
+            }
+          </SafeAreaView>
+        </TouchableOpacity>
+      )
+    }
   }
 
   render() {
     const { scheme } = this.state
     return (
       <View style={this.getStyle(scheme).container}>
-        {this.renderPopUpModal()}
-        <SafeAreaView
-          ///for detect tabbar top height
-          style={{ width: width, top: 0 }}
+        <StatusBar
+          barStyle={this.state.scheme == 'light' ? 'dark-content' : 'light-content'}
         />
+        {this.renderPopUpModal()}
         {this.renderFooter()}
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity
-            onPress={() => {
-              this.switchToScreen(switchScreenCase.DetailScreen)
-            }}
-          >
-            <SafeAreaView>
-              <Image
-                style={{
-                  width: width,
-                  height: width * 800 / 1200
-                }}
-                resizeMode='contain'
-                source={require('../../../images/mockup/cover.jpg')}
-              />
-            </SafeAreaView>
-          </TouchableOpacity>
+          {this.renderHighlight()}
           {this.renderCategory(0)}
           {this.renderCategory(1)}
           {this.renderCategory(2)}
           {this.renderCategory(3)}
           {this.renderCategory(4)}
-          {/* <Image
-            style={{ top: 0, bottom: 0, left: 0, right: 0 }}
-            resizeMode='stretch'
-            source={require('../../../images/mockup/home_bg.png')}
-          /> */}
           <View style={{ height: 40 }} />
         </ScrollView>
-        {/* {this.renderHeaderBG(this.state.toptabHeight, this.state.scheme)} */}
         <LoadingView visible={this.state.isLoading} />
-        <View
-          ///for detect tabbar bottom height
-          style={{ position: 'absolute', width: width, bottom: 0 }}
-          onLayout={event => {
-            const bottom = height - event.nativeEvent.layout.y
-            console.log('tabbar bottom : ', bottom)
-            this.setTabbarBottomHeight(bottom)
-          }}
-        />
       </View>
     );
   }

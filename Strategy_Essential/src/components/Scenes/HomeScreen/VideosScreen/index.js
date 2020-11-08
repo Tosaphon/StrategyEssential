@@ -72,7 +72,7 @@ class VideosScreen extends BaseComponent {
     bodyFormData.append('password', '123456');
     await axios({
       method: 'post',
-      url: 'http://coachflix.mmzilla.com/api/v1/login',
+      url: 'https://www.strategyessential.app/api/v1/login',
       data: bodyFormData,
       headers: { 'Content-Type': 'multipart/form-data' }
     })
@@ -92,7 +92,7 @@ class VideosScreen extends BaseComponent {
 
   async getProfile() {
     const AuthStr = 'Bearer ' + this.state.access_token
-    await axios.get('http://coachflix.mmzilla.com/api/v1/profile', {
+    await axios.get('https://www.strategyessential.app/api/v1/profile', {
       headers: { 'Authorization': AuthStr }
     })
       .then(async function (response) {

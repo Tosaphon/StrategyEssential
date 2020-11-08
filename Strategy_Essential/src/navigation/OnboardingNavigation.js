@@ -14,6 +14,7 @@ import SigninScreen from '../components/Scenes/OnboardingScreen/Signin/'
 import RegistrationScreen from '../components/Scenes/OnboardingScreen/Registration'
 import OTPConfirmationScreen from '../components/Scenes/OnboardingScreen/OTPConfirmation'
 import ConsentsScreen from '../components/Scenes/OnboardingScreen/Consent'
+import analytics from '@react-native-firebase/analytics';
 
 const NavigationStack = createStackNavigator();
 const TopTab = createMaterialTopTabNavigator()
@@ -66,9 +67,9 @@ function OnboardingNavigationStack() {
             ref={navigationRef}
             onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
             onStateChange={async () => {
-                const previousRouteName = routeNameRef.current;
-                const currentRouteName = getActiveRouteName(state);
-
+                const previousRouteName = routeNameRef.current
+                const currentRouteName = navigationRef.current.getCurrentRoute().name
+                console.log(message)
                 if (previousRouteName !== currentRouteName) {
                     await analytics().logScreenView({
                         screen_name: currentRouteName,
