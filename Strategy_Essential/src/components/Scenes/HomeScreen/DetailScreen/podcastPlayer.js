@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import Slider from '@react-native-community/slider';
 import AsyncStorage from '@react-native-community/async-storage';
+import TrackPlayer from 'react-native-track-player';
 
 const { width, height } = Dimensions.get('screen')
 const ENUM_SPEED = [
@@ -41,16 +42,10 @@ class PodcastPlayer extends BaseComponent {
         DeviceEventEmitter.emit('audioBarActive', {
             isActive: false
         });
-
     }
     componentDidMount() {
-        // this.reRender = this.props.navigation.addListener('focus', () => {
-        //     this.setState({ paused: false })
-        // });
-        // this.reRender = this.props.navigation.addListener('blur', () => {
-        //     this.setState({ paused: true })
-        // });
         BackHandler.addEventListener("hardwareBackPress", this.backHandle);
+        this.setupPlayer()
     }
     componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.backHandle);
@@ -81,6 +76,18 @@ class PodcastPlayer extends BaseComponent {
     savedPodcast() {
         this.setState({ displaySavePodcast: true, paused: true })
     }
+    setupPlayer = async () => {
+        await TrackPlayer.setupPlayer();
+        // const currentTrack = await TrackPlayer.getCurrentTrack();
+        await TrackPlayer.reset();
+        await TrackPlayer.add({
+            id: 'trackId',
+            url: require('../../../../Videos/video_01.mp4'),
+            title: 'Track Title',
+            artist: 'Track Artist',
+            artwork: require('../../../../images/LOGO.jpg')
+        });
+    }
 
     async confirmSavePodcast() {
         const { savedTitle, currentTime } = this.state
@@ -110,8 +117,10 @@ class PodcastPlayer extends BaseComponent {
         const { speedIndex } = this.state
         if (speedIndex + 1 <= ENUM_SPEED.length - 1) {
             this.setState({ speedIndex: speedIndex + 1 })
+            TrackPlayer.setRate(ENUM_SPEED[speedIndex + 1])
         } else {
             this.setState({ speedIndex: 0 })
+            TrackPlayer.setRate(ENUM_SPEED[0])
         }
     }
 
@@ -334,7 +343,16 @@ class PodcastPlayer extends BaseComponent {
                         <TouchableOpacity
                             style={{ marginHorizontal: 10 }}
                             activeOpacity={0.9}
-                            onPress={() => { this.setState({ isPodcastPlay: !isPodcastPlay, paused: !paused }) }}
+                            onPress={async () => {
+                                await this.setState({
+                                    isPodcastPlay: !isPodcastPlay, paused: !paused
+                                })
+                                // if (isPodcastPlay) {
+                                //     await TrackPlayer.pause()
+                                // } else {
+                                //     await TrackPlayer.play()
+                                // }
+                            }}
                         >
                             {isPodcastPlay ?
                                 <Ionicons name="pause" color='#dfb445' size={60} />

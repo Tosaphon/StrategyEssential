@@ -343,6 +343,8 @@ PODS:
     - React-Core
   - react-native-slider (3.0.3):
     - React
+  - react-native-track-player (1.2.3):
+    - React
   - react-native-video (5.1.0-alpha8):
     - React
     - react-native-video/Video (= 5.1.0-alpha8)
@@ -418,19 +420,19 @@ PODS:
     - React
   - RNDeviceInfo (6.2.0):
     - React-Core
-  - RNFBAnalytics (7.6.8):
+  - RNFBAnalytics (7.6.9):
     - Firebase/Analytics (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (8.4.6):
+  - RNFBApp (8.4.7):
     - Firebase/CoreOnly (~> 6.34.0)
     - React-Core
-  - RNFBIid (7.4.9):
+  - RNFBIid (7.4.10):
     - Firebase/CoreOnly (~> 6.34.0)
     - FirebaseInstanceID
     - React-Core
     - RNFBApp
-  - RNFBMessaging (7.9.1):
+  - RNFBMessaging (7.9.2):
     - Firebase/Messaging (~> 6.34.0)
     - React-Core
     - RNFBApp
@@ -500,6 +502,7 @@ DEPENDENCIES:
   - react-native-background-downloader (from `../node_modules/react-native-background-downloader`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-track-player (from `../node_modules/react-native-track-player`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -603,6 +606,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-track-player:
+    :path: "../node_modules/react-native-track-player"
   react-native-video:
     :path: "../node_modules/react-native-video"
   react-native-webview:
@@ -711,6 +716,7 @@ SPEC CHECKSUMS:
   react-native-background-downloader: f33bf10a731164e272c9101254f63c74b8dc09f9
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
+  react-native-track-player: 84552605df7d90e199ff8b5deceddff58d658523
   react-native-video: 8d97379f3c2322a569f1e27542ad1a646cad9444
   react-native-webview: c51f73be304c61d359ec3e7c5e4e8f2c977fd360
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
@@ -727,10 +733,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 3eea36d9460c5159b592f9ecbe5a77f8aca98006
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNDeviceInfo: 980848feea8d74412b16f2e3e8758c8294d63ca2
-  RNFBAnalytics: 2dc4dd9e2445faffca041b10447a23a71dcdabf8
-  RNFBApp: 7eacc7da7ab19f96c05e434017d44a9f09410da8
-  RNFBIid: 450407a3d1232137a669370647bf2e0237feeece
-  RNFBMessaging: 93a705b8286452d422a404d1303689a9b59012a0
+  RNFBAnalytics: 7d40b9b392fe2b8e6c2beeb119d1b090ed671c94
+  RNFBApp: 804b98033f45c3a3e35b56de8c894f85ef5e4388
+  RNFBIid: a5ccda7212c904ccd415beb14b3218e03922d243
+  RNFBMessaging: 9287cbf850ed3524c9f915f5b3daaf1cfaabbf06
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNGoogleSignin: ad866d4c4af2651e36801dd3b7771d7715353499
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
@@ -744,4 +750,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7c529c4ba7f32dad179b082d527c3cfe7fb71493
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

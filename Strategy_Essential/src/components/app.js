@@ -12,6 +12,7 @@ import Styles from './BaseView/Styles';
 import PodcastScreen from '../components/Scenes/HomeScreen/DetailScreen/podcastPlayer'
 import BaseComponent from './Utility/BaseComponent'
 import Video from 'react-native-video';
+import TrackPlayer from 'react-native-track-player';
 
 let { width, height } = Dimensions.get('window')
 
@@ -64,10 +65,16 @@ class App extends BaseComponent {
     await this.setState({ loadingPreload: false, isMember: isMember })
   }
 
-  _handleAppStateChange = (nextAppState) => {
+  _handleAppStateChange = async (nextAppState) => {
     if (this.state.appState.match(/inactive|background/)
       && nextAppState === 'active') {
+
       console.log("App has come to the foreground!");
+    } else {
+      const currentTrack = await TrackPlayer.getCurrentTrack();
+      if (currentTrack) {
+        TrackPlayer.play()
+      }
     }
     this.setState({ appState: nextAppState });
   };
@@ -90,7 +97,7 @@ class App extends BaseComponent {
 
   handleActiveAudioBar = async (event) => {
     await this.getTabbarBottomHeight()
-    await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive ,speedIndex:event.speedIndex })
+    await this.setState({ activeAudioBar: event.isActive, isPodcastPlay: event.isActive, speedIndex: event.speedIndex })
     const time = await Math.round(event.currentTime)
     this.player && this.player.seek(time)
     console.log("seek time : ", event)
